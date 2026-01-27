@@ -9,7 +9,9 @@ import { booksAPI } from '../services/api'
 export const useBookStore = defineStore('books', {
   state: () => ({
     books: [],
+    tbrBooksList: [],
     loading: false,
+    loadingTbr: false,
     error: null,
 
     // Cursor pagination
@@ -25,19 +27,14 @@ export const useBookStore = defineStore('books', {
   }),
 
   getters: {
-    // Livros filtrados por status TBR
-    tbrBooks: (state) => state.books.filter(book => book.status === 'To be read'),
-
-    // Todos os livros (para BookList)
     allBooks: (state) => state.books,
 
     bookCount: (state) => state.books.length,
+    tbrCount: (state) => state.tbrBooksList.length,
     hasNextPage: (state) => state.pagination.hasMore,
     hasPreviousPage: (state) => state.pagination.previousCursors.length > 0,
 
-    getBookById: (state) => (id) => {
-      return state.books.find((book) => book.id === id)
-    },
+    getBookById: (state) => (id) => state.books.find((book) => book.id === id),
   },
 
   actions: {
@@ -72,13 +69,13 @@ export const useBookStore = defineStore('books', {
 
     async createBook(bookData) {
       this.loading = true
-      this.error = null
 
       try {
         const result = await booksAPI.create(bookData)
         // Volta para primeira página
         this.pagination.previousCursors = []
         await this.fetchBooks()
+        if (bookData.status === 'To be read') await this.fetchTbrBooks()
         return result
       } catch (error) {
         this.error = 'Erro ao criar livro'
@@ -91,7 +88,6 @@ export const useBookStore = defineStore('books', {
 
     async updateBook(bookId, bookData) {
       this.loading = true
-      this.error = null
 
       try {
         const result = await booksAPI.update(bookId, bookData)
@@ -99,9 +95,9 @@ export const useBookStore = defineStore('books', {
         const currentCursor =
           this.pagination.previousCursors[this.pagination.previousCursors.length - 1]
         await this.fetchBooks(currentCursor)
+        await this.fetchTbrBooks()
         return result
       } catch (error) {
-        this.error = 'Erro ao atualizar livro'
         console.error(error)
         throw error
       } finally {
@@ -111,7 +107,6 @@ export const useBookStore = defineStore('books', {
 
     async deleteBook(bookId) {
       this.loading = true
-      this.error = null
 
       try {
         await booksAPI.delete(bookId)
@@ -119,9 +114,9 @@ export const useBookStore = defineStore('books', {
         const currentCursor =
           this.pagination.previousCursors[this.pagination.previousCursors.length - 1]
         await this.fetchBooks(currentCursor)
+        await this.fetchTbrBooks()
         return { success: true }
       } catch (error) {
-        this.error = 'Erro ao deletar livro'
         console.error(error)
         throw error
       } finally {
@@ -129,12 +124,27 @@ export const useBookStore = defineStore('books', {
       }
     },
 
+    async fetchTbrBooks(startCursor = undefined) {
+      this.loadingTbr = true
+      this.error = null
+      try {
+        const response = await booksAPI.list({
+          pageSize: this.pagination.pageSize,
+          startCursor: startCursor,
+          search: this.searchTerm,
+          status: 'To be read',
+        })
+        this.tbrBooksList = response.data.data || []
+      } catch (error) {
+        console.error('Erro ao carregar lista TBR:', error)
+      } finally {
+        this.loadingTbr = false
+      }
+    },
+
     // Próxima página (usa nextCursor do Notion)
     async nextPage() {
       if (this.pagination.hasMore && this.pagination.nextCursor) {
-        // Guarda cursor atual antes de avançar
-        const currentCursor =
-          this.pagination.previousCursors[this.pagination.previousCursors.length - 1] || undefined
         this.pagination.previousCursors.push(this.pagination.nextCursor)
 
         await this.fetchBooks(this.pagination.nextCursor)
@@ -175,28 +185,5 @@ export const useBookStore = defineStore('books', {
       this.pagination.previousCursors = []
       await this.fetchBooks()
     },
-
-    setSearchTerm(term) {
-      this.searchTerm = term
-    },
-
-    setFilterStatus(status) {
-      this.filterStatus = status
-    },
   },
 })
-/*
-Componente chama action
-    ↓
-bookStore.fetchBooks()
-    ↓
-api.list() faz fetch
-    ↓
-Backend responde
-    ↓
-Action atualiza state
-    ↓
-Getters recalculam
-    ↓
-Componentes re-renderizam automaticamente
-*/

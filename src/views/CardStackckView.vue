@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router'
 import { defineAsyncComponent } from 'vue'
 import CardIntro from '@/components/Stack/CardIntro.vue'
 const BookList = defineAsyncComponent(() => import('@/components/BookList.vue'))
-const BookForm = defineAsyncComponent(() => import('@/components/BookForm.vue'))
 const TBRList = defineAsyncComponent(() => import('@/components/TBRList.vue'))
 
 //Swiper
@@ -65,26 +64,10 @@ const showBookForm = (book = null) => {
   isModalOpen.value = true
 }
 
-const showBookList = () => {
-  selectedBook.value = null
-  currentView.value = VIEWS.LIST
-  isModalOpen.value = false
-}
-
-const handleBookSubmit = () => {
-  showBookList()
-}
-
 const onSlideChange = (swiper) => {
-  if (swiper.activeIndex === 1) {
-    currentView.value = VIEWS.LIST;
-  }
-}
+  console.log(swiper);
 
-// Computed para facilitar template
-const isFormView = computed(() => currentView.value === VIEWS.FORM)
-const isEditView = computed(() => currentView.value === VIEWS.EDIT)
-const isListView = computed(() => currentView.value === VIEWS.LIST);
+};
 </script>
 
 <template>
@@ -95,15 +78,10 @@ const isListView = computed(() => currentView.value === VIEWS.LIST);
     </SwiperSlide>
     <SwiperSlide class="stack-view__slide">
       <div class="stack-view__card stack-view__book-list">
-        <BookList v-if="isListView" @add-book="showBookForm()" @edit-book="showBookForm($event)" />
-
-        <Transition name="form-slide" @enter="onFormEnter" @leave="onFormLeave" :css="false">
-          <BookForm v-if="isFormView || isEditView" :book="selectedBook" :is-edit="isEditView" @cancel="showBookList()"
-            @submit="handleBookSubmit()" />
-        </Transition>
+        <BookList  @add-book="showBookForm()" @edit-book="showBookForm($event)" />
 
         <!-- Floating Action Button -->
-        <button v-if="isListView" @click="navigateToCreate" class="fab fab--add-book">
+        <button  @click="navigateToCreate" class="fab fab--add-book">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
