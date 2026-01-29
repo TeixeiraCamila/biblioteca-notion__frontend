@@ -76,7 +76,7 @@ const handleLogin = () => {
   width: 100%;
   max-width: 400px;
   padding: 20px;
-  background-image: url('../assets/images/bg-login.png');
+  background-image: url('../assets/images/bg-login.webp');
   background-repeat: no-repeat;
   height: 100vh;
   background-position: center;

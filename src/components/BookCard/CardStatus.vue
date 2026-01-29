@@ -8,7 +8,7 @@ const props = defineProps({
 <template>
   <div class="card-status__tape" :style="{ transform: rotate }">
     <p class="card-status__text">{{ bookStatus }}</p>
-    <img width="150" src="../../assets/images/tape.png" alt="" />
+    <img width="150" src="../../assets/images/tape.webp" alt="" />
   </div>
 </template>
 
