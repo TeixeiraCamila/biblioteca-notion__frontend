@@ -1,57 +1,105 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useBookStore } from '@/stores/bookStore'
 
 const bookStore = useBookStore()
 
-onMounted(() => {
-  bookStore.fetchTbrBooks()
-});
 
+// onMounted(async () => {
+//   await bookStore.fetchTbrBooks()
+// })
+
+/**
+ * Tenta recarregar lista em caso de erro
+ */
+const handleRetry = async () => {
+  await bookStore.fetchTbrBooks()
+}
+
+/**
+ * Verifica se deve mostrar estado vazio
+ */
+const showEmptyState = computed(() => {
+  return !bookStore.loadingTbr &&
+    bookStore.tbrBooksList.length === 0 &&
+    !bookStore.hasError
+});
 </script>
 
 <template>
-  <div class="scrapbook-container">
-    <header class="scrapbook-header">
-      <h1 class="scrapbook-title">To be read list</h1>
-      <div class="scrapbook-tape"></div>
-      <p class="scrapbook-subtitle">{{ bookStore.tbrCount }} livros para ler</p>
+  <div class="tbr-list">
+    <!-- Header -->
+    <header class="tbr-list__header">
+      <h1 class="tbr-list__title">To Be Read</h1>
+      <div class="tbr-list__tape" aria-hidden="true"></div>
+      <p class="tbr-list__subtitle">
+        {{ bookStore.tbrCount }} {{ bookStore.tbrCount === 1 ? 'livro' : 'livros' }} para ler
+      </p>
     </header>
 
-    <div v-if="bookStore.loadingTbr" class="scrapbook-status">
-      <p>Organizando...</p>
+    <!-- Estado de Erro -->
+    <div v-if="bookStore.hasError && !bookStore.loadingTbr" class="tbr-list__error">
+      <div class="tbr-list__error-icon">⚠️</div>
+      <p class="tbr-list__error-message">{{ bookStore.error }}</p>
+      <button class="tbr-list__retry-btn" @click="handleRetry">
+        Tentar Novamente
+      </button>
     </div>
 
-    <div v-else-if="bookStore.tbrBooksList.length === 0" class="scrapbook-status">
-      <p>Seu scrapbook está vazio. Adicione livros com status "To be read"!</p>
+    <!-- Estado de Loading -->
+    <div v-else-if="bookStore.loadingTbr" class="tbr-list__loading">
+      <div class="tbr-list__spinner"></div>
+      <p>Carregando livros...</p>
     </div>
 
-    <div v-else class="scrapbook-grid">
+    <!-- Estado Vazio -->
+    <div v-else-if="showEmptyState" class="tbr-list__empty">
+      <div class="tbr-list__empty-icon">📚</div>
+      <h2 class="tbr-list__empty-title">Lista vazia</h2>
+      <p class="tbr-list__empty-text">
+        Adicione livros com o status "To be read" para vê-los aqui!
+      </p>
+    </div>
+
+    <!-- Grid de Livros -->
+    <TransitionGroup v-else name="stamp" tag="div" class="tbr-list__grid">
       <div v-for="(book, index) in bookStore.tbrBooksList" :key="book.id" class="stamp-wrapper"
         :style="{ transform: `rotate(${index % 2 === 0 ? -2 : 2}deg)` }">
-        <div class="stamp">
-          <div class="stamp-inner">
-            <div class="stamp-image-container">
-              <img v-if="book.cover?.[0]" :src="book.cover[0]" :alt="book.name" class="stamp-image" />
-              <div v-else class="stamp-placeholder">📖</div>
-              <div class="stamp-overlay"></div>
+        <article class="stamp">
+          <div class="stamp__inner">
+            <!-- Imagem -->
+            <div class="stamp__image-container">
+              <img v-if="book.cover?.[0]" :src="book.cover[0]" :alt="`Capa do livro ${book.name}`" class="stamp__image"
+                loading="lazy" />
+              <div v-else class="stamp__placeholder" aria-label="Sem capa disponível">
+                📖
+              </div>
+              <div class="stamp__overlay" aria-hidden="true"></div>
             </div>
-            <div class="stamp-details">
-              <h3 class="stamp-title">{{ book.name }}</h3>
-              <p class="stamp-author">{{ book.author?.join(', ') }}</p>
+
+            <!-- Informações -->
+            <div class="stamp__details">
+              <h3 class="stamp__title">{{ book.name }}</h3>
+              <p v-if="book.author?.length" class="stamp__author">
+                {{ book.author.join(', ') }}
+              </p>
+              <p v-else class="stamp__author">Autor desconhecido</p>
             </div>
           </div>
-          <div class="stamp-perforation"></div>
-        </div>
+        </article>
       </div>
-    </div>
+    </TransitionGroup>
   </div>
 </template>
 
 <style scoped>
+/* ===== CONTAINER PRINCIPAL ===== */
+.tbr-list {
+  min-height: 100%;
+}
 
-
-.scrapbook-header {
+/* ===== HEADER ===== */
+.tbr-list__header {
   text-align: center;
   margin-bottom: 4rem;
   position: relative;
@@ -60,7 +108,7 @@ onMounted(() => {
   transform: translateX(-50%);
 }
 
-.scrapbook-title {
+.tbr-list__title {
   font-size: 2.5rem;
   color: #4a3f35;
   margin-bottom: 0.5rem;
@@ -71,7 +119,7 @@ onMounted(() => {
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.scrapbook-tape {
+.tbr-list__tape {
   position: absolute;
   top: -15px;
   left: 50%;
@@ -82,19 +130,96 @@ onMounted(() => {
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.scrapbook-subtitle {
+.tbr-list__subtitle {
   color: #8c7b6a;
   font-style: italic;
+  margin-top: 0.5rem;
 }
 
-.scrapbook-status {
+/* ===== ESTADOS (ERROR, LOADING, EMPTY) ===== */
+.tbr-list__error,
+.tbr-list__loading,
+.tbr-list__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
   text-align: center;
-  font-size: 1.2rem;
-  color: #666;
-  margin-top: 4rem;
+  color: #4a3f35;
 }
 
-.scrapbook-grid {
+/* Estado de Erro */
+.tbr-list__error {
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 12px;
+  margin: 2rem;
+}
+
+.tbr-list__error-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.tbr-list__error-message {
+  font-size: 1.125rem;
+  margin-bottom: 1.5rem;
+  color: #991b1b;
+}
+
+.tbr-list__retry-btn {
+  padding: 0.75rem 2rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tbr-list__retry-btn:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Estado de Loading */
+.tbr-list__spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 3px solid #e5e7eb;
+  border-top-color: #8b4513;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estado Vazio */
+.tbr-list__empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.tbr-list__empty-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.tbr-list__empty-text {
+  color: #8c7b6a;
+  max-width: 400px;
+}
+
+/* ===== GRID DE LIVROS ===== */
+.tbr-list__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 3rem;
@@ -103,6 +228,7 @@ onMounted(() => {
   padding: 2rem;
 }
 
+/* ===== STAMP CARD ===== */
 .stamp-wrapper {
   transition: all 0.3s ease;
   filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.2));
@@ -121,7 +247,7 @@ onMounted(() => {
   margin: 0 auto;
 }
 
-/* Efeito de borda serrilhada de selo */
+/* Efeito de borda serrilhada */
 .stamp::after {
   content: '';
   position: absolute;
@@ -134,13 +260,13 @@ onMounted(() => {
   z-index: -1;
 }
 
-.stamp-inner {
+.stamp__inner {
   border: 1px solid #ddd;
   padding: 4px;
   background: #f9f9f9;
 }
 
-.stamp-image-container {
+.stamp__image-container {
   position: relative;
   width: 100%;
   height: 220px;
@@ -148,14 +274,14 @@ onMounted(() => {
   background: #eee;
 }
 
-.stamp-image {
+.stamp__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   filter: sepia(0.2) contrast(1.1);
 }
 
-.stamp-placeholder {
+.stamp__placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -164,7 +290,7 @@ onMounted(() => {
   background: #e5e5e5;
 }
 
-.stamp-overlay {
+.stamp__overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -174,38 +300,66 @@ onMounted(() => {
   pointer-events: none;
 }
 
-.stamp-details {
+.stamp__details {
   padding: 10px 2px;
   text-align: center;
 }
 
-.stamp-title {
+.stamp__title {
   font-size: 0.85rem;
   font-weight: bold;
   color: #333;
-  margin: 0;
+  margin: 0 0 4px 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.stamp-author {
+.stamp__author {
   font-size: 0.7rem;
   color: #777;
-  margin: 4px 0 0 0;
+  margin: 0;
 }
 
-@media (max-width: 600px) {
-  .scrapbook-grid {
+/* ===== ANIMAÇÕES ===== */
+.stamp-move,
+.stamp-enter-active,
+.stamp-leave-active {
+  transition: all 0.4s ease;
+}
+
+.stamp-enter-from {
+  opacity: 0;
+  transform: scale(0.8) rotate(-10deg);
+}
+
+.stamp-leave-to {
+  opacity: 0;
+  transform: scale(0.8) rotate(10deg);
+}
+
+.stamp-leave-active {
+  position: absolute;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .tbr-list__title {
+    font-size: 2rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .tbr-list__grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 2rem;
+    padding: 1rem;
   }
 
   .stamp {
     width: 140px;
   }
 
-  .stamp-image-container {
+  .stamp__image-container {
     height: 180px;
   }
 }
