@@ -1,13 +1,13 @@
-<!-- component/BookForn.vue -->
+<!-- component/BookForm.vue -->
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
 import { useBookStore } from '@/stores/bookStore'
-import { validateRequired, validatePositiveNumber, validateYear, parseCommaSeparated } from '@/utils/validation'
 import { BOOK_STATUS, BOOK_RATE_LABELS } from '@/constants/book'
 import { useNotifications } from '@/composables/useNotifications'
 import FormSection from './FormSection.vue'
 import FormField from './FormField.vue'
 import FormActions from './FormActions.vue'
+
 const props = defineProps({
   book: {
     type: Object,
@@ -17,7 +17,8 @@ const props = defineProps({
     type: Boolean,
     default: false
   }
-});
+})
+
 const emit = defineEmits(['cancel', 'submit'])
 const bookStore = useBookStore()
 const { addNotification } = useNotifications()
@@ -33,7 +34,8 @@ const formData = reactive({
   firstPublished: '',
   iHaveCopy: false,
   wasReadIn: '',
-  startEnd: '',
+  startDate: '',
+  endDate: '',
   cover: '',
   literaryAtlas: '',
   genres: '',
@@ -44,7 +46,6 @@ const formData = reactive({
 const fieldErrors = ref({})
 const isSubmitting = ref(false)
 
-// Preencher formulário quando for edição
 onMounted(() => {
   if (props.book && props.isEdit) {
     formData.name = props.book.name || ''
@@ -57,37 +58,94 @@ onMounted(() => {
     formData.firstPublished = props.book.firstPublished || ''
     formData.iHaveCopy = props.book.iHaveCopy || false
     formData.wasReadIn = props.book.wasReadIn?.join(', ') || ''
-    formData.startEnd = props.book.startEnd || ''
     formData.cover = props.book.cover?.join(', ') || ''
     formData.literaryAtlas = props.book.literaryAtlas || ''
     formData.genres = props.book.genres?.join(', ') || ''
     formData.publishedBy = props.book.publishedBy?.join(', ') || ''
     formData.bookSeries = props.book.bookSeries || ''
+
+    // Parsing correto de startEnd
+    if (props.book.startEnd) {
+      if (typeof props.book.startEnd === 'object') {
+        formData.startDate = props.book.startEnd.start || ''
+        formData.endDate = props.book.startEnd.end || ''
+      } else if (typeof props.book.startEnd === 'string') {
+        // Se vier como string no formato "YYYY-MM-DD/YYYY-MM-DD"
+        const [start, end] = props.book.startEnd.split('/')
+        formData.startDate = start?.trim() || ''
+        formData.endDate = end?.trim() || ''
+      }
+    }
   }
 })
+
+// Função auxiliar para parsing de valores separados por vírgula
+const parseCommaSeparated = (value) => {
+  if (!value) return []
+  return value
+    .split(',')
+    .map(item => item.trim())
+    .filter(item => item.length > 0)
+}
 
 const handleSubmit = async () => {
   // Resetar erros
   fieldErrors.value = {}
 
-  // Validações
+
   const errors = {}
 
-
-  if (validateRequired(formData.name, 'Título')) {
+  // Validação de título
+  if (!formData.name || !formData.name.trim()) {
     errors.name = 'Título é obrigatório'
   }
 
-  if (formData.totalPages && validatePositiveNumber(formData.totalPages, 'Total de páginas')) {
-    errors.totalPages = 'Deve ser um número positivo'
+  //  Validação de autor
+  if (!formData.author || !formData.author.trim()) {
+    errors.author = 'Autor é obrigatório'
   }
 
-  if (formData.currentlyOn && validatePositiveNumber(formData.currentlyOn, 'Página atual')) {
-    errors.currentlyOn = 'Deve ser um número positivo'
+  // Validação de total de páginas
+  if (formData.totalPages) {
+    const pages = Number(formData.totalPages)
+    if (isNaN(pages) || pages < 0) {
+      errors.totalPages = 'Deve ser um número positivo'
+    }
   }
 
-  if (formData.firstPublished && !/^\d{4}$/.test(formData.firstPublished)) {
-    errors.firstPublished = 'Formato: YYYY'
+  // Validação de página atual
+  if (formData.currentlyOn) {
+    const current = Number(formData.currentlyOn)
+    if (isNaN(current) || current < 0) {
+      errors.currentlyOn = 'Deve ser um número positivo'
+    }
+
+    // Validar que página atual não seja maior que total
+    if (formData.totalPages && current > Number(formData.totalPages)) {
+      errors.currentlyOn = 'Página atual não pode ser maior que o total'
+    }
+  }
+
+  // Validação de ano
+  if (formData.firstPublished) {
+    const year = Number(formData.firstPublished)
+    const currentYear = new Date().getFullYear()
+
+    if (!/^\d{4}$/.test(formData.firstPublished)) {
+      errors.firstPublished = 'Formato: YYYY (4 dígitos)'
+    } else if (year < 1000 || year > currentYear + 1) {
+      errors.firstPublished = `Ano deve estar entre 1000 e ${currentYear + 1}`
+    }
+  }
+
+  //  Validação de datas
+  if (formData.startDate && formData.endDate) {
+    const start = new Date(formData.startDate)
+    const end = new Date(formData.endDate)
+
+    if (start > end) {
+      errors.endDate = 'Data de término deve ser posterior à data de início'
+    }
   }
 
   if (Object.keys(errors).length > 0) {
@@ -99,6 +157,15 @@ const handleSubmit = async () => {
   isSubmitting.value = true
 
   try {
+    // Montar startEnd corretamente
+    let startEndValue = undefined
+    if (formData.startDate || formData.endDate) {
+      startEndValue = {
+        start: formData.startDate || undefined,
+        end: formData.endDate || undefined
+      }
+    }
+
     const bookData = {
       name: formData.name.trim(),
       author: parseCommaSeparated(formData.author),
@@ -110,14 +177,13 @@ const handleSubmit = async () => {
       firstPublished: formData.firstPublished || undefined,
       iHaveCopy: formData.iHaveCopy,
       wasReadIn: parseCommaSeparated(formData.wasReadIn),
-      startEnd: formData.startEnd || undefined,
+      startEnd: startEndValue,
       cover: parseCommaSeparated(formData.cover),
       literaryAtlas: formData.literaryAtlas || undefined,
       genres: parseCommaSeparated(formData.genres),
       publishedBy: parseCommaSeparated(formData.publishedBy),
       bookSeries: formData.bookSeries || undefined,
     }
-
 
     if (props.isEdit && props.book) {
       await bookStore.updateBook(props.book.id, bookData)
@@ -139,6 +205,7 @@ const handleSubmit = async () => {
     emit('submit')
   } catch (error) {
     addNotification(`Erro ao ${props.isEdit ? 'atualizar' : 'criar'} livro`, 'error')
+    console.error(error)
   } finally {
     isSubmitting.value = false
   }
@@ -283,7 +350,6 @@ const handleCancel = () => {
         </div>
       </FormSection>
 
-      <!-- Leitura e Metadados -->
       <FormSection title="Leitura e Metadados">
         <div class="book-form__grid">
           <FormField
@@ -294,10 +360,17 @@ const handleCancel = () => {
           />
 
           <FormField
-            v-model="formData.startEnd"
-            label="Data de início/fim"
-            placeholder="Ex: 2023-01-01/2023-01-15"
-            :error="fieldErrors.startEnd"
+            v-model="formData.startDate"
+            label="Data de início"
+            type="date"
+            :error="fieldErrors.startDate"
+          />
+
+          <FormField
+            v-model="formData.endDate"
+            label="Data de término"
+            type="date"
+            :error="fieldErrors.endDate"
           />
 
           <FormField

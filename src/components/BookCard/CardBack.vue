@@ -2,16 +2,13 @@
 import { computed } from 'vue'
 import CardStatus from './CardStatus.vue'
 import { PencilLine, Trash } from 'lucide-vue-next'
-import { useBookStore } from '@/stores/bookStore'
-
-const bookStore = useBookStore()
 
 const props = defineProps({
   book: { type: Object, required: true },
   rotate: { type: String, required: false },
 })
 
-const emit = defineEmits(['edit'])
+const emit = defineEmits(['edit', 'delete'])
 
 const statusClass = computed(() => {
   switch (props.book.status) {
@@ -58,15 +55,15 @@ const startEndString = computed(() => {
   return `Lido de ${start} até ${end}`
 })
 
+// ✅ CORRIGIDO: Emite o objeto book completo para o componente pai
 const handleEdit = () => {
   emit('edit', props.book)
 }
 
-const handleDelete = async (bokId) => {
-  if (confirm('Tem certeza que deseja deletar este livro?')) {
-    bookStore.deleteBook(bokId)
-  }
-};
+// ✅ CORRIGIDO: Emite evento de delete ao invés de chamar store diretamente
+const handleDelete = () => {
+  emit('delete', props.book)
+}
 </script>
 
 <template>
@@ -111,10 +108,12 @@ const handleDelete = async (bokId) => {
       </div>
 
       <div class="card-back__actions">
-        <button class="card-back__action-btn">
-          <PencilLine @click="handleEdit(book.id)" />
+        <!-- ✅ CORRIGIDO: Chama handleEdit sem passar argumentos -->
+        <button class="card-back__action-btn" @click="handleEdit">
+          <PencilLine />
         </button>
-        <button class="card-back__action-btn" @click="handleDelete(book.id)">
+        <!-- ✅ CORRIGIDO: Chama handleDelete sem passar argumentos -->
+        <button class="card-back__action-btn" @click="handleDelete">
           <Trash />
         </button>
       </div>

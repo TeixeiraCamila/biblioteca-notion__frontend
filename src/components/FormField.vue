@@ -1,33 +1,5 @@
-<template>
-  <div class="form-field" :class="{ 'form-field--required': required }">
-    <label :for="fieldId" class="form-field__label">
-      {{ label }}
-      <span v-if="required" class="form-field__asterisk">*</span>
-    </label>
-
-    <div class="form-field__input-wrapper">
-      <select v-if="type === 'select'" :id="fieldId" v-model="localValue" class="form-field__input form-field__select"
-        :class="{ 'form-field__input--error': error }" @change="$emit('update:modelValue', $event.target.value)">
-        <option value="" disabled>{{ placeholder || 'Selecione uma opção' }}</option>
-        <option v-for="option in options" :key="option" :value="option">
-          {{ option }}
-        </option>
-      </select>
-
-      <input v-else-if="type === 'checkbox'" :id="fieldId" type="checkbox" v-model="localValue"
-        class="form-field__checkbox" @change="$emit('update:modelValue', $event.target.checked)" />
-
-      <input v-else :id="fieldId" :type="inputType" v-model="localValue" :placeholder="placeholder"
-        class="form-field__input" :class="{ 'form-field__input--error': error }"
-        @input="$emit('update:modelValue', $event.target.value)" />
-    </div>
-
-    <span v-if="error" class="form-field__error">{{ error }}</span>
-  </div>
-</template>
-
 <script setup>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -57,6 +29,24 @@ const props = defineProps({
   options: {
     type: Array,
     default: () => []
+  },
+  // labels customizados
+  labels: {
+    type: Object,
+    default: null
+  },
+  // inputs numéricos
+  min: {
+    type: [String, Number],
+    default: undefined
+  },
+  max: {
+    type: [String, Number],
+    default: undefined
+  },
+  step: {
+    type: [String, Number],
+    default: undefined
   }
 })
 
@@ -75,12 +65,50 @@ const inputType = computed(() => {
       return 'number'
     case 'email':
       return 'email'
+    case 'date':
+      return 'date'
+    case 'password':
+      return 'password'
+    case 'url':
+      return 'url'
     default:
       return 'text'
   }
 });
-
 </script>
+
+<template>
+  <div class="form-field" :class="{ 'form-field--required': required }">
+    <label :for="fieldId" class="form-field__label">
+      {{ label }}
+      <span v-if="required" class="form-field__asterisk">*</span>
+    </label>
+
+    <div class="form-field__input-wrapper">
+      <!-- Select com suporte a labels customizados -->
+      <select v-if="type === 'select'" :id="fieldId" v-model="localValue" class="form-field__input form-field__select"
+        :class="{ 'form-field__input--error': error }" @change="$emit('update:modelValue', $event.target.value)">
+        <option value="" disabled>{{ placeholder || 'Selecione uma opção' }}</option>
+        <!-- ✅ CORRIGIDO: Suporte a labels customizados -->
+        <option v-for="option in options" :key="option" :value="option">
+          {{ labels ? labels[option] : option }}
+        </option>
+      </select>
+
+      <!-- Checkbox -->
+      <input v-else-if="type === 'checkbox'" :id="fieldId" type="checkbox" v-model="localValue"
+        class="form-field__checkbox" @change="$emit('update:modelValue', $event.target.checked)" />
+
+      <!-- Outros tipos de input -->
+      <input v-else :id="fieldId" :type="inputType" v-model="localValue" :placeholder="placeholder" :min="min"
+        :max="max" :step="step" class="form-field__input" :class="{ 'form-field__input--error': error }"
+        @input="$emit('update:modelValue', $event.target.value)" />
+    </div>
+
+    <span v-if="error" class="form-field__error">{{ error }}</span>
+  </div>
+</template>
+
 
 <style scoped>
 .form-field {
@@ -104,7 +132,7 @@ const inputType = computed(() => {
 }
 
 .form-field__input-wrapper {
-  /* // position: relative; */
+  position: relative;
 }
 
 .form-field__input {
@@ -138,11 +166,16 @@ const inputType = computed(() => {
 
 .form-field__select {
   cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23374151' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
 }
 
 .form-field__checkbox {
-  width: 1rem;
-  height: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
   accent-color: var(--accent);
   cursor: pointer;
 }
@@ -151,5 +184,12 @@ const inputType = computed(() => {
   color: #dc2626;
   font-size: 0.875rem;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.form-field__error::before {
+  content: '⚠';
 }
 </style>
