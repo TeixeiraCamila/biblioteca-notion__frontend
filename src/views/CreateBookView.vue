@@ -5,7 +5,8 @@
     </header>
 
     <main class="create-book-view__content">
-      <BookForm :book="book" :is-edit="isEdit" @submit="handleSubmit" @cancel="handleCancel" />
+      <FormSkeleton v-if="isEdit && !book" />
+      <BookForm v-else :book="book" :is-edit="isEdit" @submit="handleSubmit" @cancel="handleCancel" />
     </main>
   </div>
 </template>
@@ -15,6 +16,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useBookStore } from '@/stores/bookStore'
 import BookForm from '@/components/BookForm.vue'
+import FormSkeleton from '@/components/FormSkeleton.vue'
 
 const route = useRoute()
 const router = useRouter()

@@ -106,3 +106,60 @@ select:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent3_muted);
 }
+
+/* === SKELETON SCREENS === */
+
+/* Base skeleton animation */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Skeleton line styles */
+.skeleton-line {
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: skeleton-shimmer 1.5s infinite;
+}
+
+/* Skeleton title */
+.skeleton-title {
+  height: 20px;
+  width: 80%;
+  margin-bottom: 0.25rem;
+}
+
+/* Skeleton field */
+.skeleton-field {
+  height: 48px;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+}
+
+/* Skeleton button */
+.skeleton-button {
+  height: 48px;
+  border-radius: 8px;
+}
+
+/* Skeleton section title */
+.skeleton-section-title {
+  height: 20px;
+  width: 40%;
+  font-weight: 600;
+}
+
+/* Skeleton checkbox */
+.skeleton-checkbox {
+  width: 100%;
+  height: 56px;
+  background: rgba(218, 147, 143, 0.05);
+  border: 1px solid var(--accent_muted);
+  border-radius: 8px;
+}

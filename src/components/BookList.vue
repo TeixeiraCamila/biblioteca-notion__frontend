@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useBookStore } from '@/stores/bookStore'
 import BookCard from './BookCard.vue'
+import BookCardSkeleton from './BookCardSkeleton.vue'
 import Pagination from './Pagination.vue'
 import Filters from './Filters.vue'
 
@@ -37,9 +38,8 @@ const handleEditBook = (book) => {
     </div>
 
     <!-- Estado de Loading -->
-    <div v-if="bookStore.loading" class="book-list__state">
-      <div class="book-list__spinner" aria-label="Carregando"></div>
-      <p>Carregando livros...</p>
+    <div v-if="bookStore.loading" class="book-list__skeletons">
+      <BookCardSkeleton v-for="n in 12" :key="n" />
     </div>
 
     <!-- Estado de Erro -->
@@ -109,6 +109,14 @@ const handleEditBook = (book) => {
 }
 
 /* Estado de Loading */
+.book-list__skeletons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 3rem 1.5rem;
+  flex: 1;
+  margin-top: 2rem;
+}
+
 .book-list__spinner {
   width: 3rem;
   height: 3rem;
