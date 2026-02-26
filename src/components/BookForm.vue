@@ -92,7 +92,6 @@ const handleSubmit = async () => {
   // Resetar erros
   fieldErrors.value = {}
 
-
   const errors = {}
 
   // Validação de título
@@ -169,6 +168,7 @@ const handleSubmit = async () => {
     const bookData = {
       name: formData.name.trim(),
       author: parseCommaSeparated(formData.author),
+      status: formData.status || undefined,
       status: formData.status || undefined,
       rate: formData.rate || undefined,
       totalPages: formData.totalPages ? Number(formData.totalPages) : undefined,

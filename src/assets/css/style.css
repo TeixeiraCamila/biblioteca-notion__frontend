@@ -1,26 +1,4 @@
 
-/* === STATUS === */
-.status-read {
-  background: var(--read_bg);
-  color: var(--read_text);
-}
-
-.status-reading {
-  background: var(--currently-reading_bg);
-  color: var(--currently-reading_text);
-}
-
-.status-status-to-be-read {
-  background: var(--to-be-read_bg);
-  color: var(--to-be-read_text);
-}
-
-.status-default,
-.status-dnf {
-  background: gray;
-  color: var(--white);
-}
-
 /* === GLOBAL FORM ELEMENTS === */
 
 /* Buttons */

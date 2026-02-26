@@ -1,31 +1,51 @@
-import { ref } from 'vue'
-
-const notifications = ref([])
+import { useToast } from 'vue-toastification'
 
 export function useNotifications() {
-  const addNotification = (message, type = 'info', duration = 3000) => {
-    const id = Date.now()
-    notifications.value.push({ id, message, type })
+  const toast = useToast()
 
-    if (duration > 0) {
-      setTimeout(() => {
-        removeNotification(id)
-      }, duration)
+  const addNotification = (message, type = 'info', options = {}) => {
+    if (!toast) {
+      console.warn(
+        'Toast plugin not found. Make sure vue-toastification is properly installed and configured.',
+      )
+      return
     }
 
-    return id
+    const toastOptions = {
+      timeout: 3000,
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: true,
+      ...options,
+    }
+
+    switch (type) {
+      case 'success':
+        toast.success(message, toastOptions)
+        break
+      case 'error':
+        toast.error(message, toastOptions)
+        break
+      case 'warning':
+        toast.warning(message, toastOptions)
+        break
+      case 'info':
+      default:
+        toast.info(message, toastOptions)
+        break
+    }
   }
 
   const removeNotification = (id) => {
-    const index = notifications.value.findIndex(n => n.id === id)
-    if (index > -1) {
-      notifications.value.splice(index, 1)
+    if (toast && toast.dismiss) {
+      toast.dismiss(id)
     }
   }
 
   return {
-    notifications,
     addNotification,
-    removeNotification
+    removeNotification,
   }
 }

@@ -25,6 +25,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useNotifications } from '@/composables/useNotifications'
 
 const props = defineProps({
   title: { type: String, default: 'Confirmar ação' },
@@ -34,6 +35,7 @@ const props = defineProps({
 
 const emit = defineEmits(['confirm', 'cancel'])
 
+const { addNotification } = useNotifications()
 const isOpen = ref(false)
 
 const open = () => {
@@ -44,9 +46,14 @@ const close = () => {
   isOpen.value = false
 }
 
-const handleConfirm = () => {
-  emit('confirm')
-  close()
+const handleConfirm = async () => {
+  try {
+    await emit('confirm')
+    addNotification('Livro deletado com sucesso!', 'success')
+    close()
+  } catch (error) {
+    addNotification('Erro ao deletar livro. Tente novamente.', 'error')
+  }
 }
 
 const handleCancel = () => {
@@ -58,7 +65,7 @@ const handleCancel = () => {
 defineExpose({
   open,
   close,
-})
+});
 </script>
 
 <style scoped>
@@ -72,11 +79,11 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 2000;
 }
 
 .confirm-dialog__content {
-  background: var(--color-book-card__face--background);
+  background: var(--bg);
   border-radius: 12px;
   padding: 1.5rem;
   max-width: 28rem;
@@ -126,12 +133,11 @@ defineExpose({
 }
 
 .confirm-dialog__btn--danger {
-  background: var(--color-error);
-  color: var(--white);
-}
-
-.confirm-dialog__btn--danger:hover {
   background: #dc2626;
+  color: var(--text);
+}
+.confirm-dialog__btn--danger:hover {
+  background: #b91c1c;
 }
 
 /* Animação de entrada */

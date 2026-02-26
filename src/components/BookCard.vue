@@ -1,11 +1,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useBookStore } from '@/stores/bookStore'
+import { useNotifications } from '@/composables/useNotifications'
 import ConfirmDialog from './ConfirmDialog.vue'
 import CardFront from './BookCard/CardFront.vue'
 import CardBack from './BookCard/CardBack.vue'
 
 import { useAnimatedModal } from '@/composables/useAnimatedModal.js'
+
+const { addNotification } = useNotifications()
 
 const props = defineProps({
   book: {
@@ -47,7 +50,7 @@ const handleDelete = async () => {
     closeModal() // Fecha o modal após deletar
   } catch (error) {
     console.error('Erro ao deletar livro:', error)
-    alert('Erro ao deletar livro. Tente novamente.')
+    addNotification('Erro ao deletar livro. Tente novamente.', 'error')
   }
 }
 
@@ -134,7 +137,7 @@ const handleEdit = (book) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 100;
   transition: all 0.3s ease;
 }
 

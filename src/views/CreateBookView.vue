@@ -15,8 +15,13 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useBookStore } from '@/stores/bookStore'
+import { useNotifications } from '@/composables/useNotifications'
 import BookForm from '@/components/BookForm.vue'
 import FormSkeleton from '@/components/FormSkeleton.vue'
+
+import { useToast } from 'vue-toastification'
+
+const { addNotification } = useNotifications()
 
 const route = useRoute()
 const router = useRouter()
@@ -39,14 +44,16 @@ onMounted(async () => {
 
     if (!book.value) {
       // Livro não encontrado
-      alert('Livro não encontrado')
+      addNotification('Livro não encontrado', 'error')
       router.push('/')
     }
   }
 })
 
 const handleSubmit = () => {
-  router.push('/')
+  addNotification('Livro criado com sucesso!', 'success')
+  // Não navegar para a página inicial, permanecer na página de criação
+  // O BookForm já reseta o formulário e exibe a notificação de sucesso
 }
 
 const handleCancel = () => {
