@@ -1,398 +1,216 @@
+# Biblioteca Notion
 
-# 📚 Sistema de Biblioteca Pessoal
+Um sistema de gerenciamento de biblioteca pessoal integrado com o Notion, desenvolvido com Vue.js 3, Pinia e Vite. A aplicação permite organizar sua coleção de livros, controlar o progresso de leitura e gerenciar sua lista de desejos (TBR - To Be Read).
 
-Sistema full-stack para gerenciar biblioteca pessoal conectado ao Notion como banco de dados.
+![Vue.js](https://img.shields.io/badge/Vue.js-3.5.22-green?style=flat-square)
+![Pinia](https://img.shields.io/badge/Pinia-3.0.3-blue?style=flat-square)
+![Vite](https://img.shields.io/badge/Vite-7.1.11-orange?style=flat-square)
+![TypeScript](https://img.shields.io/badge/TypeScript-ESM-blue?style=flat-square)
 
-## 🚀 Tecnologias
+## 📖 Visão Geral
 
-### Backend
-- **Node.js** + **Express** - Servidor e API REST
-- **Notion API** - Banco de dados
-- **dotenv** - Gerenciamento de variáveis de ambiente
-- **cors** - Habilita comunicação frontend/backend
+O Biblioteca Notion é uma aplicação web moderna que sincroniza seus dados de livros com o Notion, permitindo que você:
 
-### Frontend
-- **Vue 3** - Framework progressivo
-- **Pinia** - Gerenciamento de estado
-- **Vue Router** - Navegação entre páginas
-- **Vite** - Build tool e dev server
+- **Gerencie sua coleção de livros** com status de leitura (Para Ler, Lendo, Completo, Abandonado)
+- **Controle o progresso** de leitura com avaliações e notas
+- **Organize sua lista TBR** (To Be Read) para planejar suas próximas leituras
+- **Filtre e busque** livros por título, autor ou status
+- **Interface animada** com transições suaves e design responsivo
 
-## 📁 Estrutura do Projeto
+## 🚀 Funcionalidades
+
+### Principais Características
+
+- **Gerenciamento Completo de Livros**: Cadastro, edição e exclusão de livros
+- **Status de Leitura**: Controle o progresso com 4 estados diferentes
+- **Avaliações**: Sistema de estrelas e favoritos para suas avaliações
+- **Lista TBR**: Gerencie sua lista de livros para ler
+- **Busca e Filtros**: Encontre livros rapidamente por diferentes critérios
+- **Paginação**: Sistema de paginação baseado em cursor para grandes coleções
+- **Interface Responsiva**: Design adaptável para diferentes dispositivos
+- **Animações**: Transições suaves e efeitos visuais agradáveis
+
+### Tecnologias Utilizadas
+
+- **Frontend**: Vue.js 3 com Composition API
+- **Gerenciamento de Estado**: Pinia
+- **Roteamento**: Vue Router 4
+- **Build Tool**: Vite
+- **Estilização**: CSS puro com variáveis CSS
+- **Animações**: GSAP (GreenSock Animation Platform)
+- **UI Components**: Lucide Icons
+- **Notificações**: Vue Toastification
+- **HTTP Client**: Axios
+- **Formulários**: Validação customizada
+
+## 🛠️ Requisitos
+
+- Node.js ^20.19.0 || >=22.12.0
+- npm ou yarn
+
+## 📦 Instalação
+
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/TeixeiraCamila/biblioteca-notion__frontend.git
+   cd biblioteca-notion__frontend
+   ```
+
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure o ambiente:**
+   Crie um arquivo `.env.local` na raiz do projeto:
+   ```env
+   VITE_API_URL=http://localhost:3000/api
+   ```
+
+4. **Inicie o servidor de desenvolvimento:**
+   ```bash
+   npm run dev
+   ```
+
+5. **Abra no navegador:**
+   Acesse `http://localhost:5173`
+
+## 🏗️ Estrutura do Projeto
+
 ```
-projeto/
-│
-├── backend/                          # Servidor Node.js
-│   ├── config/
-│   │   └── notion.js                 # Configuração do Notion (chaves secretas)
-│   │
-│   ├── services/
-│   │   ├── list.js                   # Busca livros do Notion
-│   │   └── create.js                 # Cria livros no Notion
-│   │
-│   ├── routes/
-│   │   └── books.js                  # Rotas da API (/api/books)
-│   │
-│   ├── server.js                     # Arquivo principal do servidor
-│   ├── .env                          # Variáveis secretas (NÃO commitar!)
-│   ├── package.json                  # Dependências do backend
-│   └── test-rest.js                  # Testes (opcional)
-│
-└── biblioteca-livros/                # Frontend Vue 3
-    ├── src/
-    │   ├── assets/                   # Imagens, estilos globais
-    │   │
-    │   ├── components/               # Componentes reutilizáveis
-    │   │   ├── BookCard.vue          # Card de um livro
-    │   │   ├── BookForm.vue          # Formulário de cadastro
-    │   │   ├── BookList.vue          # Lista de livros
-    │   │   └── Pagination.vue        # Controles de paginação
-    │   │
-    │   ├── stores/
-    │   │   └── bookStore.js          # Estado global (Pinia)
-    │   │
-    │   ├── services/
-    │   │   └── api.js                # Comunicação com backend
-    │   │
-    │   ├── views/                    # Páginas
-    │   │   ├── HomeView.vue          # Página inicial (lista)
-    │   │   └── CreateBookView.vue    # Página de cadastro
-    │   │
-    │   ├── router/
-    │   │   └── index.js              # Configuração de rotas
-    │   │
-    │   ├── App.vue                   # Componente raiz
-    │   └── main.js                   # Ponto de entrada
-    │
-    ├── index.html                    # HTML principal
-    ├── package.json                  # Dependências do frontend
-    └── vite.config.js                # Configuração do Vite
-
+src/
+├── components/          # Componentes Vue reutilizáveis
+│   ├── BookCard/       # Componentes de cartão de livro
+│   ├── Stack/          # Componentes de pilha de cartões
+│   ├── BookForm.vue    # Formulário de cadastro/edição
+│   ├── BookList.vue    # Lista de livros
+│   ├── Filters.vue     # Filtros e busca
+│   └── ...
+├── views/              # Páginas da aplicação
+│   ├── HomeView.vue    # Página inicial
+│   ├── CreateBookView.vue # Página de criação
+│   ├── CardStackckView.vue # Visualização em pilha
+│   └── LoginView.vue   # Página de login
+├── stores/             # Stores do Pinia
+│   ├── bookStore.js    # Gerenciamento de livros
+│   └── userStore.js    # Gerenciamento de usuários
+├── services/           # Camada de serviços/API
+│   └── api.js          # Configuração do Axios
+├── constants/          # Constantes e enums
+│   └── book.js         # Constantes de livros
+├── composables/        # Composables reutilizáveis
+│   ├── useAnimatedModal.js
+│   └── useNotifications.js
+├── router/             # Configuração de rotas
+│   └── index.js
+├── utils/              # Utilitários
+│   └── validation.js   # Validação de formulários
+└── assets/             # Assets estáticos
+    ├── css/            # Estilos CSS
+    ├── images/         # Imagens e ícones
+    └── main.css        # Estilos principais
 ```
-## Instalação
 
-#### 1. Configurar Notion
-
-Crie uma integration em: https://www.notion.so/my-integrations
-Copie a Integration Token
-Crie um database no Notion com as colunas:
-
-Name (title)
-Author (multi-select)
-Status (select)
-Total (number)
-Currently on (number)
-Type (multi-select)
-Rate (select)
-I have a copy of this (checkbox)
-First published in (select)
-
-
-Compartilhe o database com sua integration (3 pontinhos → Add connections)
-Copie o Database ID da URL
-
-### 2. Backend
+## 🔧 Comandos Disponíveis
 
 ```bash
-    cd backend
-    npm install
-    # Criar arquivo .env
-    echo "NOTION_API_KEY=seu_token_aqui" > .env
-    echo "NOTION_DATABASE_ID=seu_database_id_aqui" >> .env
-echo "PORT=3000" >> .env
+# Desenvolvimento
+npm run dev              # Inicia o servidor de desenvolvimento
 
-    # Iniciar servidor
-    npm run dev
+# Build
+npm run build            # Cria build de produção
+npm run preview          # Visualiza build localmente
+
+# Qualidade de Código
+npm run lint             # Executa ESLint com correção automática
+npm run format           # Formata código com Prettier
+
+# Deploy
+npm run vercel-build     # Build para deploy no Vercel
 ```
 
-### 3. Frontend
+## 📡 API Backend
 
-```bash
-    cd biblioteca-livros
-    npm install
+Esta aplicação frontend se comunica com um backend que se integra ao Notion. Para funcionar corretamente, você precisará:
 
-    # Iniciar aplicação
-    npm run dev
-```
+1. **Backend**: Configure o backend correspondente (não incluído neste repositório)
+2. **Notion Integration**: Crie uma integração no Notion e obtenha as credenciais
+3. **Database**: Configure a database de livros no Notion com os campos necessários
 
-### 4. Acessar
+### Estrutura da Database no Notion
 
-- Frontend: http://localhost:5173
-- Backend: http://localhost:3000
-- API: http://localhost:3000/api/books
+A database deve conter os seguintes campos:
 
----
+- **Name**: Título do livro (Title)
+- **Author**: Autor (Text)
+- **Status**: Status de leitura (Select)
+- **Rate**: Avaliação (Select)
+- **Pages**: Páginas totais (Number)
+- **Read Pages**: Páginas lidas (Number)
+- **Cover**: Capa do livro (Files & media)
+- **Notes**: Anotações (Text)
+- **Start Date**: Data de início (Date)
+- **End Date**: Data de término (Date)
 
+## 🎨 Design e Estilo
 
+- **Design System**: Variáveis CSS para cores, tipografia e espaçamentos
+- **Responsividade**: Layout adaptável para mobile, tablet e desktop
+- **Animações**: Transições suaves com GSAP
+- **Acessibilidade**: Sempre que possível, utiliza-se atributos ARIA e boas práticas
 
-## 📖 Funcionalidades Implementadas
+## 🚀 Deploy
 
-- Listar livros com paginação (20 por página)
-- Buscar por título ou autor
-- Filtrar por status (Reading, Completed, To Read)
-- Criar novo livro
-- Cache inteligente (5 minutos)
-- Navegação entre páginas
-- Visualização de progresso de leitura
-- Design responsivo
-- Suporte a +100 livros (paginação no backend)
-- Dark Mode
+### Vercel
 
-## 🚀 Lista de Melhorias Futuras
+1. Conecte seu repositório ao Vercel
+2. Configure as variáveis de ambiente:
+   - `VITE_API_URL`: URL do backend
+3. O deploy será automático a cada push
 
-###  🎨 Interface e UX
- 
-#### **Alta Prioridade**
+### Outros Providers
 
-- **Dark Mode** - FEITO
-   - Adicionar toggle de tema claro/escuro ✓
-   - Persistir preferência no localStorage ✓
-   - Ícone de sol/lua no header            ✓ 
+A aplicação é compatível com qualquer provider que suporte SPA (Single Page Application).
 
-- **Loading Skeletons**
-   - Substituir spinner por skeleton screens
-   - Melhor feedback visual durante carregamento
-   - Cards "fantasmas" enquanto carrega
+## 🤝 Contribuição
 
-- **Toast Notifications**
-   - Notificações de sucesso/erro mais elegantes
-   - Biblioteca: vue-toastification ou custom
-   - Posição: canto superior direito
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature: `git checkout -b feature/nome-da-feature`
+3. Faça commit das suas alterações: `git commit -m 'Adiciona nova feature'`
+4. Dê push para a branch: `git push origin feature/nome-da-feature`
+5. Abra um Pull Request
 
-- **Confirmação de Ações**
-   - Modal de confirmação antes de criar livro
-   - "Tem certeza que quer sair sem salvar?"
-   - Desfazer ações recentes
+## 📋 Requisitos Futuros
 
-- **Imagens de Capa**
-   - Exibir capas dos livros nos cards         ✓
-   - Upload de imagens ou URL
-   - Placeholder bonito quando não tiver capa
+- [ ] Estatísticas de leitura
+- [ ] Importação/exportação de dados
+- [ ] Modo offline
+- [ ] Integração com APIs de livros (Google Books, Open Library)
+- [ ] Dashboard de leitura
+- [ ] Metas de leitura mensais/anuais
+- [ ] Compartilhamento de livros
+- [ ] Sistema de recomendações
 
-#### **Média Prioridade**
+## 🐛 Relatório de Bugs
 
-- **Ordenação**
-   - Ordenar por: nome, data, avaliação, progresso
-   - Ordem crescente/decrescente
-   - Lembrar última ordenação usada
+Se encontrar algum bug, por favor abra uma issue no repositório com:
 
-- **Visualizações Alternativas**
-   - Modo lista (compacto)
-   - Modo grid (atual)
-   - Modo tabela (detalhado)
+- Descrição do problema
+- Passos para reproduzir
+- Comportamento esperado
+- Comportamento atual
+- Informações do ambiente (browser, versão, etc.)
 
-- **Animações e Transições**
-   - Transições suaves entre páginas
-   - Animações ao adicionar/remover livros
-   - Fade-in dos cards
+## 📄 Licença
 
-- **Busca Avançada**
-    - Busca com autocomplete
-    - Sugestões enquanto digita
-    - Highlight dos termos encontrados
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
 
+## 🙏 Agradecimentos
 
----
-### 📊 **Funcionalidades**
-#### **Alta Prioridade**
-
- - **Editar Livro**
-    - Botão "Editar" no card
-    - Modal ou página de edição
-    - PUT /api/books/:id
-
-- **Deletar Livro**
-    - Botão "Excluir" no card
-    - Confirmação antes de deletar
-    - DELETE /api/books/:id
-
-- **Estatísticas**
-    - Dashboard com gráficos
-    - Total de livros, páginas lidas
-    - Livros por status, tipo, autor
-    - Biblioteca: Chart.js ou Recharts
-
-- **Metas de Leitura**
-    - Definir meta anual (ex: 50 livros/ano)
-    - Progresso da meta
-    - Gráfico de acompanhamento
-
-- **Sistema de Tags**
-    - Tags customizadas (além dos tipos)
-    - Filtrar por tags
-    - Nuvem de tags ??
-
-#### Média Prioridade
-
-- **Exportar Dados**
-    - Exportar lista em CSV
-    - Exportar em PDF (relatório bonito)
-    - Exportar backup JSON
-
-- **Importar Dados**
-    - Importar CSV
-    - Importar de Goodreads
-    - Drag & drop de arquivo
-
-- **Notas e Citações**
-    - Adicionar notas pessoais
-    - Salvar citações favoritas
-    - Marcar páginas importantes
-
-- **Histórico de Leitura**
-    - Timeline de quando leu cada livro
-    - Data de início e fim
-    - Tempo total de leitura
-
-
-
-#### Baixa Prioridade
-- **Avaliação Detalhada**
-    - Avaliação por critérios (plot, personagens, etc)
-    - Escala de 0-10 ao invés de estrelas
-    - Comentários e reviews
-
-- **Integração com APIs Externas**
-    - Buscar info no Google Books API
-    - Autocompletar dados ao digitar título
-    - Buscar capas automaticamente
-
-- **Séries de Livros**
-    - Agrupar livros de uma série
-    - Ordem de leitura
-    - Progresso na série
+- Vue.js Team pelo framework incrível
+- Notion pela API poderosa
+- Comunidade open source pelos excelentes pacotes
 
 ---
 
-### 🔐 **Segurança e Performance**
-#### **Alta Prioridade**
-
-
-- **Autenticação de Usuário**
-    - Login/registro
-    - JWT tokens
-    - Cada usuário vê apenas seus livros
-
-- **Rate Limiting**
-    - Limitar requisições por IP
-    - Prevenir spam/abuso
-    - Biblioteca: express-rate-limit
-
-- **Validação de Dados**
-    - Validação no backend (Joi, Zod)
-    - Validação no frontend (VeeValidate)
-    - Mensagens de erro claras
-
-- **HTTPS**
-    - Certificado SSL em produção
-    - Redirecionar HTTP → HTTPS
-    - Secure cookies
-
-#### Média Prioridade
-- **Otimização de Imagens**
-    - Comprimir capas automaticamente
-    - Servir WebP quando suportado
-    - Lazy loading de imagens
-
-- **Service Worker**
-    - PWA (Progressive Web App)
-    - Funcionar offline
-    - Cache de assets
-
-- **Logging e Monitoramento**
-    - Logs estruturados (Winston)
-    - Monitorar erros (Sentry)
-    - Métricas de performance
-
-- **Testes**
-    - Testes unitários (Vitest)
-    - Testes de integração (Cypress)
-    - Testes E2E
-
----
-
-
-### 🗄️ **Backend e Infraestrutura**
-#### Alta Prioridade
-- **Paginação do Notion Otimizada**
-    - Usar cursor pagination do Notion
-    - Não carregar todos os livros de uma vez
-    - Buscar apenas página necessária
-
-- **Cache Redis**
-    - Substituir cache em memória por Redis
-    - Cache persistente entre restarts
-    - Compartilhado entre instâncias
-
-- **Filas de Processamento**
-    - Bull/BullMQ para tarefas assíncronas
-    - Importação em background
-    - Envio de emails
-
-- **Deploy Automatizado**
-    - CI/CD (GitHub Actions)
-    - Deploy no Vercel (frontend)
-    - Deploy no Railway/Render (backend)
-
-#### Média Prioridade
-- **Webhook do Notion**
-    - Sincronizar mudanças em tempo real
-    - Invalidar cache quando Notion muda
-    - Atualizar frontend automaticamente
-
-- **GraphQL API**
-    - Alternativa à REST
-    - Cliente escolhe campos que quer
-    - Menos requisições
-
-- **Versionamento de API**
-    - /api/v1/books
-    - /api/v2/books
-    - Manter compatibilidade
-
-- **Docker**
-    - Dockerfile para backend
-    - Dockerfile para frontend
-    - docker-compose.yml
-
----
-
-### 📱 **Mobile e Acessibilidade**
-
-#### Alta Prioridade
-- **Responsividade Avançada**
-    - Otimizar para tablets
-    - Menu hamburguer no mobile
-    - Bottom navigation mobile
-
-- **Acessibilidade (A11y)**
-    - ARIA labels corretos
-    - Navegação por teclado
-    - Alto contraste
-
-- **PWA Completo**
-    - Instalar no celular
-    - Ícone na home screen
-    - Splash screen
-
-
----
-
-### 🎓 **Recursos Sociais**
-
-#### Baixa Prioridade (Features Avançadas)
-
-
-- **Recomendações**
-    - IA para sugerir próxima leitura
-    - Baseado em gostos similares
-    - "Usuários que leram X também leram Y"
-
-- **Clube do Livro**
-    - Criar grupos de leitura
-    - Chat/comentários por livro
-    - Calendário de encontros
-
-- **Integração Social**
-    - GoodReads sync
-
----# biblioteca-notion__frontend
+**Desenvolvido com ❤️ para amantes da leitura**
