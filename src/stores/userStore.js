@@ -7,6 +7,7 @@ export const useUserStore = defineStore('user', {
     userActive: null,
     loading: false,
     error: null,
+    isGuest: false,
   }),
 
   getters: {
@@ -118,14 +119,46 @@ export const useUserStore = defineStore('user', {
       const user = this.users.find((u) => u.id === userId)
       if (user) {
         this.userActive = user
+        this.isGuest = false
         this.saveActiveUser(userId)
       }
+    },
+
+    // entrar como visitante
+    setGuestUser() {
+      this.userActive = {
+        id: 'guest',
+        name: 'Visitante',
+        type: 'guest'
+      }
+      this.isGuest = true
+      localStorage.setItem('USER_LOGADO', 'guest')
+      localStorage.setItem('IS_GUEST', 'true')
+    },
+
+    // verifica se o usuário atual é visitante
+    checkIfGuest() {
+      const isGuest = localStorage.getItem('IS_GUEST') === 'true'
+      const userId = localStorage.getItem('USER_LOGADO')
+
+      if (isGuest && userId === 'guest') {
+        this.isGuest = true
+        this.userActive = {
+          id: 'guest',
+          name: 'Visitante',
+          type: 'guest'
+        }
+        return true
+      }
+      return false
     },
 
     // clear active user
     clearActiveUser() {
       this.userActive = null
+      this.isGuest = false
       localStorage.removeItem('USER_LOGADO')
+      localStorage.removeItem('IS_GUEST')
     },
   },
 })

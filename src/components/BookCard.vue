@@ -73,7 +73,6 @@ const handleEdit = (book) => {
 
 <template>
   <div>
-    <!-- Card na lista -->
     <div ref="cardEl" class="book-card book-card--list" :class="{
       'book-card--animating': isAnimating,
       'book-card--editing': isEditing
@@ -82,19 +81,15 @@ const handleEdit = (book) => {
       <CardFront :book="book" :rotate="`rotate(${randomTilt}deg)`" />
     </div>
 
-    <!-- Modal com flip card -->
     <Teleport to="body">
       <div v-if="isModalOpen" class="book-modal__overlay" :class="{ visible: isModalVisible }" @click.self="closeModal">
         <div class="book-modal__container" :class="{ visible: isModalVisible }" @click="toggleFlip">
           <div class="book-card__flip" :class="{ 'book-card__flip--flipped': isFlipped }">
-            <!-- Frente do card -->
             <div class="book-card__face book-card__face--front">
               <CardFront :book="book" :is-modal="true" :key="book.id" :rotate="`rotate(${randomTilt}deg)`" />
             </div>
 
-            <!-- Verso do card -->
             <div class="book-card__face book-card__face--back">
-              <!-- ✅ CORRIGIDO: Escuta eventos do CardBack -->
               <CardBack :book="book" :key="book.id" :rotate="`rotate(${randomTilt}deg)`" @edit="handleEdit"
                 @delete="openDeleteDialog" @close="closeModalWithAnimation" />
             </div>
@@ -103,7 +98,6 @@ const handleEdit = (book) => {
       </div>
     </Teleport>
 
-    <!-- Dialog de confirmação de delete -->
     <ConfirmDialog ref="deleteDialog" title="Deletar Livro"
       :message="`Tem certeza que deseja deletar '${book.name}'? Esta ação não pode ser desfeita.`"
       confirm-text="Deletar" @confirm="handleDelete" @cancel="closeModalWithAnimation" />

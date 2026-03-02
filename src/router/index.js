@@ -41,12 +41,17 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
   const saved = localStorage.getItem('USER_LOGADO')
-  if (saved) {
+  const isGuest = localStorage.getItem('IS_GUEST') === 'true'
+
+  // Verifica se é usuário visitante
+  if (isGuest && saved === 'guest') {
+    userStore.checkIfGuest()
+  } else if (saved) {
     userStore.userActive = saved
   }
 
   const requiresAuth = to.meta.requiresAuth
-  const isAuthenticated = userStore.userActive !== null
+  const isAuthenticated = userStore.userActive !== null || userStore.isGuest
 
   // precisa de autenticação e o usuário não está logado
   if (requiresAuth && !isAuthenticated) {

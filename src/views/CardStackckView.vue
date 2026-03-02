@@ -1,11 +1,12 @@
 <script setup>
 import { defineAsyncComponent } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/userStore'
 import CardIntro from '@/components/Stack/CardIntro.vue'
 import { useBookStore } from '@/stores/bookStore'
 
 const bookStore = useBookStore()
-
+const userStore = useUserStore()
 
 // Lazy load dos componentes pesados para melhor performance
 const BookList = defineAsyncComponent(() => import('@/components/BookList.vue'))
@@ -53,7 +54,7 @@ const onSlideChange = (swiper) => {
         <BookList />
 
         <!-- Botão flutuante para adicionar livro -->
-        <button class="fab" aria-label="Adicionar novo livro" @click="navigateToCreate">
+        <button v-if="!userStore.isGuest" class="fab" aria-label="Adicionar novo livro" @click="navigateToCreate">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true">
             <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"

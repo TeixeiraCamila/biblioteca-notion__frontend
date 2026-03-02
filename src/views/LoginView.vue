@@ -17,6 +17,12 @@
         <button type="submit">Entrar</button>
       </form>
 
+      <div class="login-view__guest-container">
+        <button type="button" class="login-view__guest-btn" @click="handleGuestLogin">
+          Entrar como Visitante
+        </button>
+      </div>
+
       <div v-if="error" class="login-view__error-message">
         {{ error }}
       </div>
@@ -68,7 +74,14 @@ const handleLogin = () => {
   } else {
     error.value = 'Usuário não encontrado. Verifique seu nome e email.'
   }
-};
+}
+
+// Processa o login como visitante
+const handleGuestLogin = () => {
+  error.value = ''
+  userStore.setGuestUser()
+  router.push({ name: 'home' })
+}
 </script>
 
 <style scoped>
@@ -157,5 +170,31 @@ const handleLogin = () => {
   border-radius: 8px;
   text-align: center;
   font-size: 14px;
+}
+
+.login-view__guest-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.login-view__guest-btn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    background-color 0.2s;
+}
+
+.login-view__guest-btn:hover {
+  background: var(--accent);
+  color: white;
+  transform: translateY(-2px);
 }
 </style>

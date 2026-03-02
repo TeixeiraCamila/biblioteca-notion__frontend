@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { useUserStore } from '@/stores/userStore'
 import CardStatus from './CardStatus.vue'
 import { PencilLine, Trash, X } from 'lucide-vue-next'
 
@@ -9,6 +10,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['edit', 'delete'])
+
+const userStore = useUserStore()
 
 const statusClass = computed(() => {
   switch (props.book.status) {
@@ -112,14 +115,13 @@ const handleClose = () => {
         </ul>
       </div>
 
-        <div class="card-back__actions">
+        <div class="card-back__actions" v-if="!userStore.isGuest">
           <button class="card-back__action-btn" @click="handleEdit">
             <PencilLine />
           </button>
           <button class="card-back__action-btn" @click="handleDelete">
             <Trash />
           </button>
-
         </div>
     </div>
   </div>
