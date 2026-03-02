@@ -70,6 +70,32 @@ export const useBookStore = defineStore('books', {
 
   actions: {
     // ========================================
+    // BUSCAR LIVRO POR ID
+    // ========================================
+    async fetchBookById(bookId) {
+      this.loading = true
+      this.error = null
+
+      try {
+        console.log('🔍 Buscando livro por ID...', bookId)
+
+        const response = await booksAPI.get(bookId)
+
+        if (response?.data) {
+          console.log('✅ Livro encontrado')
+          return response.data
+        }
+
+        throw new Error('Livro não encontrado')
+      } catch (error) {
+        this._handleError('fetchBookById', error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+
+    // ========================================
     // BUSCAR LIVROS (COM CURSOR PAGINATION)
     // ========================================
     async fetchBooks(startCursor = undefined) {

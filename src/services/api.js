@@ -48,6 +48,10 @@ export const booksAPI = {
     return api.get('/books', { params })
   },
 
+  get(id) {
+    return api.get(`/books/${id}`)
+  },
+
   create(data) {
     return api.post('/books', data)
   },

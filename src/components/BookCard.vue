@@ -23,6 +23,7 @@ const bookStore = useBookStore()
 const deleteDialog = ref(null)
 const cardEl = ref(null)
 const randomTilt = ref(0)
+const isEditing = ref(false)
 
 const {
   isModalOpen,
@@ -48,6 +49,8 @@ const handleDelete = async () => {
   try {
     await bookStore.deleteBook(props.book.id)
     closeModal() // Fecha o modal após deletar
+    // Notificação já é exibida no ConfirmDialog após sucesso da operação
+    // Não é necessário duplicar aqui
   } catch (error) {
     console.error('Erro ao deletar livro:', error)
     addNotification('Erro ao deletar livro. Tente novamente.', 'error')
@@ -56,15 +59,24 @@ const handleDelete = async () => {
 
 //  Propaga evento de edição para o componente pai
 const handleEdit = (book) => {
+  isEditing.value = true
   closeModal() // Fecha o modal antes de editar
-  emit('edit', book)
+
+  // Pequeno delay para garantir o fechamento do modal antes de emitir o evento
+  setTimeout(() => {
+    emit('edit', book)
+    isEditing.value = false
+  }, 200)
 };
 </script>
 
 <template>
   <div>
     <!-- Card na lista -->
-    <div ref="cardEl" class="book-card book-card--list" :class="{ 'book-card--animating': isAnimating }"
+    <div ref="cardEl" class="book-card book-card--list" :class="{
+      'book-card--animating': isAnimating,
+      'book-card--editing': isEditing
+    }"
       :style="{ transform: `rotate(${randomTilt}deg)` }" @click="openAnimatedModal">
       <CardFront :book="book" :rotate="`rotate(${randomTilt}deg)`" />
     </div>
@@ -126,6 +138,17 @@ const handleEdit = (book) => {
 .book-card.book-card--animating {
   opacity: 0;
   pointer-events: none;
+}
+
+/* Efeito de edição */
+.book-card--editing {
+  animation: editing-pulse 0.6s ease-in-out;
+}
+
+@keyframes editing-pulse {
+  0% { transform: rotate(var(--random-tilt, 0deg)) scale(1); }
+  50% { transform: rotate(var(--random-tilt, 0deg)) scale(1.05); }
+  100% { transform: rotate(var(--random-tilt, 0deg)) scale(1); }
 }
 
 /* MODAL OVERLAY (FUNDO ESCURECIDO) */

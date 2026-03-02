@@ -1,6 +1,6 @@
 <!-- component/BookForm.vue -->
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, watch } from 'vue'
 import { useBookStore } from '@/stores/bookStore'
 import { BOOK_STATUS, BOOK_RATE_LABELS } from '@/constants/book'
 import { useNotifications } from '@/composables/useNotifications'
@@ -48,6 +48,7 @@ const isSubmitting = ref(false)
 
 onMounted(() => {
   if (props.book && props.isEdit) {
+    // Preencher campos básicos
     formData.name = props.book.name || ''
     formData.author = props.book.author?.join(', ') || ''
     formData.status = props.book.status || ''
@@ -64,20 +65,72 @@ onMounted(() => {
     formData.publishedBy = props.book.publishedBy?.join(', ') || ''
     formData.bookSeries = props.book.bookSeries || ''
 
-    // Parsing correto de startEnd
-    if (props.book.startEnd) {
-      if (typeof props.book.startEnd === 'object') {
-        formData.startDate = props.book.startEnd.start || ''
-        formData.endDate = props.book.startEnd.end || ''
-      } else if (typeof props.book.startEnd === 'string') {
-        // Se vier como string no formato "YYYY-MM-DD/YYYY-MM-DD"
-        const [start, end] = props.book.startEnd.split('/')
-        formData.startDate = start?.trim() || ''
-        formData.endDate = end?.trim() || ''
-      }
-    }
+    // Parsing robusto de startEnd
+    parseStartEndData(props.book.startEnd)
   }
 })
+
+// Função auxiliar para parsing robusto de startEnd
+const parseStartEndData = (startEndData) => {
+  if (!startEndData) {
+    formData.startDate = ''
+    formData.endDate = ''
+    return
+  }
+
+  try {
+    // Caso 1: startEnd é um objeto com start e end
+    if (typeof startEndData === 'object' && startEndData !== null) {
+      formData.startDate = startEndData.start || ''
+      formData.endDate = startEndData.end || ''
+    }
+    // Caso 2: startEnd é uma string no formato "YYYY-MM-DD/YYYY-MM-DD"
+    else if (typeof startEndData === 'string') {
+      const [start, end] = startEndData.split('/')
+      formData.startDate = start?.trim() || ''
+      formData.endDate = end?.trim() || ''
+    }
+    // Caso 3: startEnd é um array
+    else if (Array.isArray(startEndData)) {
+      formData.startDate = startEndData[0] || ''
+      formData.endDate = startEndData[1] || ''
+    }
+    // Caso 4: startEnd é um único valor (pode ser start ou end)
+    else {
+      formData.startDate = ''
+      formData.endDate = ''
+    }
+  } catch (error) {
+    console.warn('Erro ao parsear startEnd:', error)
+    formData.startDate = ''
+    formData.endDate = ''
+  }
+}
+
+// Watch para atualizar o form quando o livro mudar (caso o book seja carregado assíncronamente)
+watch(() => props.book, (newBook) => {
+  if (newBook && props.isEdit) {
+    // Atualizar todos os campos
+    formData.name = newBook.name || ''
+    formData.author = newBook.author?.join(', ') || ''
+    formData.status = newBook.status || ''
+    formData.rate = newBook.rate || ''
+    formData.totalPages = newBook.totalPages || ''
+    formData.currentlyOn = newBook.currentlyOn || ''
+    formData.type = newBook.type?.join(', ') || ''
+    formData.firstPublished = newBook.firstPublished || ''
+    formData.iHaveCopy = newBook.iHaveCopy || false
+    formData.wasReadIn = newBook.wasReadIn?.join(', ') || ''
+    formData.cover = newBook.cover?.join(', ') || ''
+    formData.literaryAtlas = newBook.literaryAtlas || ''
+    formData.genres = newBook.genres?.join(', ') || ''
+    formData.publishedBy = newBook.publishedBy?.join(', ') || ''
+    formData.bookSeries = newBook.bookSeries || ''
+
+    // Atualizar startEnd
+    parseStartEndData(newBook.startEnd)
+  }
+}, { immediate: true })
 
 // Função auxiliar para parsing de valores separados por vírgula
 const parseCommaSeparated = (value) => {
@@ -169,7 +222,6 @@ const handleSubmit = async () => {
       name: formData.name.trim(),
       author: parseCommaSeparated(formData.author),
       status: formData.status || undefined,
-      status: formData.status || undefined,
       rate: formData.rate || undefined,
       totalPages: formData.totalPages ? Number(formData.totalPages) : undefined,
       currentlyOn: formData.currentlyOn ? Number(formData.currentlyOn) : undefined,
@@ -193,14 +245,16 @@ const handleSubmit = async () => {
       addNotification('Livro criado com sucesso!', 'success')
     }
 
-    // Resetar formulário
-    Object.keys(formData).forEach(key => {
-      if (typeof formData[key] === 'boolean') {
-        formData[key] = false
-      } else {
-        formData[key] = ''
-      }
-    })
+    // Resetar formulário apenas se for criação, não edição
+    if (!props.isEdit) {
+      Object.keys(formData).forEach(key => {
+        if (typeof formData[key] === 'boolean') {
+          formData[key] = false
+        } else {
+          formData[key] = ''
+        }
+      })
+    }
 
     emit('submit')
   } catch (error) {
@@ -212,14 +266,16 @@ const handleSubmit = async () => {
 }
 
 const handleCancel = () => {
-  // Resetar formulário
-  Object.keys(formData).forEach(key => {
-    if (typeof formData[key] === 'boolean') {
-      formData[key] = false
-    } else {
-      formData[key] = ''
-    }
-  })
+  // Resetar formulário apenas se for criação, não edição
+  if (!props.isEdit) {
+    Object.keys(formData).forEach(key => {
+      if (typeof formData[key] === 'boolean') {
+        formData[key] = false
+      } else {
+        formData[key] = ''
+      }
+    })
+  }
 
   emit('cancel')
 };
