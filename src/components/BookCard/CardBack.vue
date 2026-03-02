@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import CardStatus from './CardStatus.vue'
-import { PencilLine, Trash } from 'lucide-vue-next'
+import { PencilLine, Trash, X } from 'lucide-vue-next'
 
 const props = defineProps({
   book: { type: Object, required: true },
@@ -64,6 +64,11 @@ const handleEdit = () => {
 const handleDelete = () => {
   emit('delete', props.book)
 }
+
+// ✅ NOVO: Emite evento de close para fechar modal com animação
+const handleClose = () => {
+  emit('close')
+}
 </script>
 
 <template>
@@ -107,16 +112,15 @@ const handleDelete = () => {
         </ul>
       </div>
 
-      <div class="card-back__actions">
-        <!-- ✅ CORRIGIDO: Chama handleEdit sem passar argumentos -->
-        <button class="card-back__action-btn" @click="handleEdit">
-          <PencilLine />
-        </button>
-        <!-- ✅ CORRIGIDO: Chama handleDelete sem passar argumentos -->
-        <button class="card-back__action-btn" @click="handleDelete">
-          <Trash />
-        </button>
-      </div>
+        <div class="card-back__actions">
+          <button class="card-back__action-btn" @click="handleEdit">
+            <PencilLine />
+          </button>
+          <button class="card-back__action-btn" @click="handleDelete">
+            <Trash />
+          </button>
+
+        </div>
     </div>
   </div>
 </template>

@@ -32,6 +32,7 @@ const {
   isAnimating,
   openAnimatedModal,
   closeModal,
+  closeModalWithAnimation,
   toggleFlip
 } = useAnimatedModal(cardEl, randomTilt)
 
@@ -95,7 +96,7 @@ const handleEdit = (book) => {
             <div class="book-card__face book-card__face--back">
               <!-- ✅ CORRIGIDO: Escuta eventos do CardBack -->
               <CardBack :book="book" :key="book.id" :rotate="`rotate(${randomTilt}deg)`" @edit="handleEdit"
-                @delete="openDeleteDialog" />
+                @delete="openDeleteDialog" @close="closeModalWithAnimation" />
             </div>
           </div>
         </div>
@@ -105,7 +106,7 @@ const handleEdit = (book) => {
     <!-- Dialog de confirmação de delete -->
     <ConfirmDialog ref="deleteDialog" title="Deletar Livro"
       :message="`Tem certeza que deseja deletar '${book.name}'? Esta ação não pode ser desfeita.`"
-      confirm-text="Deletar" @confirm="handleDelete" />
+      confirm-text="Deletar" @confirm="handleDelete" @cancel="closeModalWithAnimation" />
   </div>
 </template>
 
@@ -161,12 +162,12 @@ const handleEdit = (book) => {
   align-items: center;
   justify-content: center;
   z-index: 100;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .book-modal__overlay.visible {
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
 }
 
 /* CONTAINER DO CARD NO MODAL */
@@ -174,13 +175,13 @@ const handleEdit = (book) => {
   cursor: pointer;
   perspective: 2000px;
   opacity: 0;
-  transform: scale(0.9);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scale(0.8) translateY(20px);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .book-modal__container.visible {
   opacity: 1;
-  transform: scale(1);
+  transform: scale(1) translateY(0);
 }
 
 /* FLIP WRAPPER (3D FLIP) */
@@ -189,10 +190,33 @@ const handleEdit = (book) => {
   height: calc(var(--card-h) * 1.1);
   transform-style: preserve-3d;
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  perspective: 1000px;
 }
 
 .book-card__flip.book-card__flip--flipped {
   transform: rotateY(180deg);
+}
+
+/* Animação de flip suave em ambos os sentidos */
+.book-card__flip {
+  animation: flip-smooth 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes flip-smooth {
+  0% { transform: rotateY(0deg); }
+  50% { transform: rotateY(90deg) scale(1.02); }
+  100% { transform: rotateY(180deg); }
+}
+
+/* Animação reversa */
+.book-card__flip:not(.book-card__flip--flipped) {
+  animation: flip-smooth-reverse 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes flip-smooth-reverse {
+  0% { transform: rotateY(180deg); }
+  50% { transform: rotateY(90deg) scale(1.02); }
+  100% { transform: rotateY(0deg); }
 }
 
 /* FACES DO CARD (FRENTE E VERSO) */
@@ -203,10 +227,11 @@ const handleEdit = (book) => {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   background: var(--white);
-  border-radius: 8px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
   min-height: 300px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateZ(0);
 }
 
 .book-card__face.book-card__face--front {
@@ -216,6 +241,33 @@ const handleEdit = (book) => {
 .book-card__face.book-card__face--back {
   transform: rotateY(180deg);
   padding: 0;
+}
+
+/* Efeito de profundidade durante o flip */
+.book-card__face--front {
+  z-index: 2;
+}
+
+.book-card__face--back {
+  z-index: 1;
+}
+
+/* Sombra dinâmica durante o flip */
+.book-card__flip--flipped .book-card__face--front {
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+}
+
+.book-card__flip--flipped .book-card__face--back {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Efeito de tilt sutil durante o flip */
+.book-card__flip--flipped {
+  transform: rotateY(180deg) rotateX(2deg);
+}
+
+.book-card__flip:not(.book-card__flip--flipped) {
+  transform: rotateY(0deg) rotateX(0deg);
 }
 
 /* SCROLL CUSTOMIZADO */
