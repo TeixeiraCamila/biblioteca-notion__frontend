@@ -10,6 +10,7 @@ export const useBookStore = defineStore('books', {
     // ===== DADOS PRINCIPAIS =====
     books: [],
     tbrBooksList: [],
+    readingBooks: [],
 
     // ===== ESTADOS DE LOADING =====
     loading: false,
@@ -32,57 +33,37 @@ export const useBookStore = defineStore('books', {
   }),
 
   getters: {
-    /**
-     * Retorna todos os livros da página atual
-     */
     allBooks: (state) => state.books,
 
-    /**
-     * Conta total de livros na página atual
-     */
     bookCount: (state) => state.books.length,
 
-    /**
-     * Conta total de livros TBR
-     */
     tbrCount: (state) => state.tbrBooksList.length,
 
-    /**
-     * Verifica se existe próxima página
-     */
     hasNextPage: (state) => state.pagination.hasMore,
 
-    /**
-     * Verifica se pode voltar para página anterior
-     */
     hasPreviousPage: (state) => state.pagination.previousCursors.length > 0,
 
-    /**
-     * Busca livro por ID
-     */
     getBookById: (state) => (id) => state.books.find((book) => book.id === id),
 
-    /**
-     * Verifica se há erro ativo
-     */
     hasError: (state) => state.error !== null,
+
+    readingStats: (state) => {
+      const total = state.books
+      const read = state.books.filter((book) => book.status === 'Read')
+      const toBeRead = state.books.filter((book) => book.status === 'To be read')
+      return { total, read, toBeRead }
+    },
   },
 
   actions: {
-    // ========================================
-    // BUSCAR LIVRO POR ID
-    // ========================================
     async fetchBookById(bookId) {
       this.loading = true
       this.error = null
 
       try {
-        console.log('🔍 Buscando livro por ID...', bookId)
-
         const response = await booksAPI.get(bookId)
 
         if (response?.data) {
-          console.log('✅ Livro encontrado')
           return response.data
         }
 
@@ -95,9 +76,7 @@ export const useBookStore = defineStore('books', {
       }
     },
 
-    // ========================================
     // BUSCAR LIVROS (COM CURSOR PAGINATION)
-    // ========================================
     async fetchBooks(startCursor = undefined) {
       this.loading = true
       this.error = null
@@ -125,8 +104,6 @@ export const useBookStore = defineStore('books', {
             this.pagination.hasMore = response.data.pagination.hasMore
             this.pagination.nextCursor = response.data.pagination.nextCursor
           }
-
-          console.log(`✅ ${this.books.length} livros carregados`)
         }
       } catch (error) {
         this._handleError('fetchBooks', error)
@@ -136,19 +113,12 @@ export const useBookStore = defineStore('books', {
       }
     },
 
-    // ========================================
-    // CRIAR NOVO LIVRO
-    // ========================================
     async createBook(bookData) {
       this.loading = true
       this.error = null
 
       try {
-        console.log('➕ Criando novo livro...', bookData)
-
         const result = await booksAPI.create(bookData)
-
-        console.log('✅ Livro criado com sucesso')
 
         // Volta para primeira página após criar
         this.pagination.previousCursors = []
@@ -168,19 +138,12 @@ export const useBookStore = defineStore('books', {
       }
     },
 
-    // ========================================
-    // ATUALIZAR LIVRO EXISTENTE
-    // ========================================
     async updateBook(bookId, bookData) {
       this.loading = true
       this.error = null
 
       try {
-        console.log('✏️ Atualizando livro...', { bookId, bookData })
-
         const result = await booksAPI.update(bookId, bookData)
-
-        console.log('✅ Livro atualizado com sucesso')
 
         // Recarrega página atual para refletir mudanças
         const currentCursor =
@@ -199,19 +162,12 @@ export const useBookStore = defineStore('books', {
       }
     },
 
-    // ========================================
-    // DELETAR LIVRO
-    // ========================================
     async deleteBook(bookId) {
       this.loading = true
       this.error = null
 
       try {
-        console.log('🗑️ Deletando livro...', bookId)
-
         await booksAPI.delete(bookId)
-
-        console.log('✅ Livro deletado com sucesso')
 
         // Recarrega página atual
         const currentCursor =
@@ -230,44 +186,46 @@ export const useBookStore = defineStore('books', {
       }
     },
 
-    // ========================================
-    // BUSCAR LIVROS TBR (TO BE READ)
-    // ========================================
-    async fetchTbrBooks(startCursor = undefined) {
+    async fetchTbrBooks(startCursor = undefined, status = 'To be read') {
       this.loadingTbr = true
       this.error = null
 
       try {
-        console.log('🔄 Buscando lista TBR...')
-
         const response = await booksAPI.list({
           pageSize: this.pagination.pageSize,
           startCursor: startCursor,
           search: this.searchTerm,
-          status: 'To be read',
+          status: status,
         })
 
-        this.tbrBooksList = response.data.data || []
-
-        console.log(`✅ ${this.tbrBooksList.length} livros TBR carregados`)
+        switch (status) {
+          case 'To be read':
+            this.tbrBooksList = response.data.data || []
+            break
+          case 'Reading':
+            this.readingBooks = response.data.data || []
+            break
+          default:
+            break
+        }
       } catch (error) {
         this._handleError('fetchTbrBooks', error)
-        this.tbrBooksList = []
+        // Limpa apenas a lista correspondente ao status que estava sendo buscado
+        if (status === 'To be read') {
+          this.tbrBooksList = []
+        } else if (status === 'Reading') {
+          this.readingBooks = []
+        }
       } finally {
         this.loadingTbr = false
       }
     },
 
-    // ========================================
-    // NAVEGAÇÃO - PRÓXIMA PÁGINA
-    // ========================================
     async nextPage() {
       if (!this.pagination.hasMore || !this.pagination.nextCursor) {
         console.warn('⚠️ Não há próxima página')
         return
       }
-
-      console.log('➡️ Próxima página')
 
       // Salva cursor atual no stack antes de avançar
       this.pagination.previousCursors.push(this.pagination.nextCursor)
@@ -275,9 +233,6 @@ export const useBookStore = defineStore('books', {
       await this.fetchBooks(this.pagination.nextCursor)
     },
 
-    // ========================================
-    // NAVEGAÇÃO - PÁGINA ANTERIOR
-    // ========================================
     async previousPage() {
       if (this.pagination.previousCursors.length === 0) {
         console.warn('⚠️ Não há página anterior')
@@ -296,57 +251,34 @@ export const useBookStore = defineStore('books', {
       await this.fetchBooks(previousCursor)
     },
 
-    // ========================================
-    // ALTERAR TAMANHO DA PÁGINA
-    // ========================================
     async changePageSize(size) {
-      console.log(`📄 Alterando tamanho da página para ${size}`)
-
       this.pagination.pageSize = size
       this.pagination.previousCursors = []
 
       await this.fetchBooks()
     },
 
-    // ========================================
-    // BUSCAR (SEARCH)
-    // ========================================
     async search(term) {
-      console.log(`🔍 Buscando: "${term}"`)
-
       this.searchTerm = term
       this.pagination.previousCursors = []
 
       await this.fetchBooks()
     },
 
-    // ========================================
-    // LIMPAR BUSCA
-    // ========================================
     async clearSearch() {
-      console.log('🧹 Limpando busca')
-
       this.searchTerm = ''
       this.pagination.previousCursors = []
 
       await this.fetchBooks()
     },
 
-    // ========================================
-    // FILTRAR POR STATUS
-    // ========================================
     async filterByStatus(status) {
-      console.log(`🔎 Filtrando por status: ${status}`)
-
       this.filterStatus = status
       this.pagination.previousCursors = []
 
       await this.fetchBooks()
     },
 
-    // ========================================
-    // RESETAR STORE
-    // ========================================
     $reset() {
       console.log('🔄 Resetando store')
 
@@ -356,7 +288,7 @@ export const useBookStore = defineStore('books', {
       this.loadingTbr = false
       this.error = null
       this.pagination = {
-        pageSize: 20,
+        pageSize: 18,
         hasMore: false,
         nextCursor: null,
         previousCursors: [],
@@ -365,9 +297,6 @@ export const useBookStore = defineStore('books', {
       this.filterStatus = 'all'
     },
 
-    // ========================================
-    // LIMPAR ERRO
-    // ========================================
     clearError() {
       this.error = null
     },

@@ -8,9 +8,10 @@ import { useBookStore } from '@/stores/bookStore'
 const bookStore = useBookStore()
 const userStore = useUserStore()
 
-// Lazy load dos componentes pesados para melhor performance
+
 const BookList = defineAsyncComponent(() => import('@/components/BookList.vue'))
 const TBRList = defineAsyncComponent(() => import('@/components/TBRList.vue'))
+const ReadingList = defineAsyncComponent(() => import('@/components/ReadingList.vue'))
 
 // Swiper para navegação entre cards
 import { Swiper, SwiperSlide } from 'swiper/vue'
@@ -21,9 +22,7 @@ import 'swiper/css/effect-cards'
 const router = useRouter()
 const modules = [EffectCards]
 
-/**
- * Navega para página de criação de livro
- */
+
 const navigateToCreate = () => {
   router.push('/criar')
 }
@@ -32,9 +31,12 @@ const navigateToCreate = () => {
  * Handler para mudança de slide (apenas para debug em DEV)
  */
 const onSlideChange = (swiper) => {
+  console.log("🚀 ~ onSlideChange ~ swiper:", swiper.activeIndex)
 
   if (swiper.activeIndex === 1) {
-    console.log('TBR next');
+    bookStore.fetchTbrBooks(undefined, 'Reading')
+  }
+  if (swiper.activeIndex === 2) {
     bookStore.fetchTbrBooks()
   }
 };
@@ -43,17 +45,15 @@ const onSlideChange = (swiper) => {
 <template>
   <Swiper :effect="'cards'" :grab-cursor="true" :modules="modules" :direction="'vertical'" class="stack-view__swiper"
     @slideChange="onSlideChange">
-    <!-- Slide 1: Introdução -->
+
     <SwiperSlide class="stack-view__slide">
       <CardIntro class="stack-view__card" />
     </SwiperSlide>
 
-    <!-- Slide 2: Lista de Livros -->
     <SwiperSlide class="stack-view__slide">
       <div class="stack-view__card stack-view__book-list">
         <BookList />
 
-        <!-- Botão flutuante para adicionar livro -->
         <button v-if="!userStore.isGuest" class="fab" aria-label="Adicionar novo livro" @click="navigateToCreate">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true">
@@ -64,7 +64,12 @@ const onSlideChange = (swiper) => {
       </div>
     </SwiperSlide>
 
-    <!-- Slide 3: Lista TBR (To Be Read) -->
+    <SwiperSlide class="stack-view__slide">
+      <div class="stack-view__card stack-view__now">
+        <ReadingList />
+      </div>
+    </SwiperSlide>
+
     <SwiperSlide class="stack-view__slide">
       <div class="stack-view__card stack-view__tbr">
         <TBRList />
@@ -110,6 +115,13 @@ const onSlideChange = (swiper) => {
 /* Card TBR com cor sólida */
 .stack-view__tbr {
   background-color: #8b4513;
+}
+
+.stack-view__now {
+  background-image: url('../assets/images/cards/card_reading/bg.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
 /* ===== FLOATING ACTION BUTTON ===== */

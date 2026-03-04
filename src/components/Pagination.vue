@@ -5,23 +5,25 @@
     </div>
 
     <div class="pagination__controls">
-      <button @click="$emit('previous')" :disabled="!hasPrevious" >
-        ← Anterior
+      <button @click="$emit('previous')" :disabled="!hasPrevious">
+        <span>← Anterior</span>
       </button>
 
-      <button @click="$emit('next')" :disabled="!hasNext" >
-        Próximo →
+      <button @click="$emit('next')" :disabled="!hasNext">
+        <span>Próximo →</span>
       </button>
     </div>
 
     <div class="pagination__page-size-selector">
       <label>Itens por página:</label>
-      <select :value="pageSize" @change="$emit('changeSize', Number($event.target.value))" >
-        <option value="9">9</option>
-        <option value="18">18</option>
-        <option value="36">36</option>
-        <option value="50">50</option>
-      </select>
+      <div class="select_wrapper">
+        <select name="page-size" id="page-size" class="pagination__select--primary"
+          @change="$emit('changeSize', $event.target.value)">
+          <option v-for="size in selects" :key="size" :value="size" :selected="size === pageSize">
+            {{ size }}
+          </option>
+        </select>
+      </div>
     </div>
   </div>
 </template>
@@ -35,6 +37,8 @@ defineProps({
 })
 
 defineEmits(['previous', 'next', 'changeSize']);
+
+const selects = [4, 8, 12, 18, 24, 30];
 </script>
 
 <style scoped>

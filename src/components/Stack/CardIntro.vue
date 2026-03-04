@@ -69,7 +69,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="card-intro flex flex-center justify-center items-center">
+  <div class="card-intro">
     <div class="card-intro__detail">
       <img class="card-intro__detail-01" src="../../assets/images/cards/card_01_intro/bg-r_top.webp" alt="">
       <img class="card-intro__detail-02" src="../../assets/images/cards/card_01_intro/bg-r_bottom.webp" alt="">

@@ -134,7 +134,7 @@ defineExpose({
 
 .confirm-dialog__btn--danger {
   background: #dc2626;
-  color: var(--text);
+  color: var(--black);
 }
 .confirm-dialog__btn--danger:hover {
   background: #b91c1c;

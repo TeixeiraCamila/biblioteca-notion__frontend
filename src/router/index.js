@@ -6,7 +6,7 @@ import { useUserStore } from '@/stores/userStore'
 
 import CreateBookView from '../views/CreateBookView.vue'
 import LoginView from '@/views/LoginView.vue'
-import CardStackck from '@/views/CardStackckView.vue'
+import CardStackck from '@/views/CardStackView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

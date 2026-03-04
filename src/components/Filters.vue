@@ -25,24 +25,32 @@ const clearFilters = () => {
 
 <template>
   <div class="filters">
-    <div class="filters__search-box">
-      <input type="text" placeholder="Buscar por título ou autor..." v-model="localSearch" @keyup.enter="handleSearch"
-        class="filters__search-input filters__input--primary" />
-      <button @click="handleSearch" class="filters__search-btn filters__btn--primary">🔍 Buscar</button>
+    <div class="filters__search-box ">
+      <div class="input_wrapper">
+        <input type="text" placeholder="Buscar por título ou autor..." v-model="localSearch" @keyup.enter="handleSearch"
+          class="filters__search-input" />
+      </div>
+      <button @click="handleSearch" class="filters__search-btn filters__btn--primary">
+        <span> Buscar </span>
+      </button>
     </div>
 
     <div class="filters__filter-status">
-      <select v-model="localStatus" @change="handleFilterChange" class="filters__status-select filters__select--primary">
-        <option value="all">Todos os status</option>
-        <option value="Reading">Lendo</option>
-        <option value="Read">Completo</option>
-        <option value="To be read">Para Ler</option>
-        <option value="DNF">Abondonados</option>
-      </select>
+      <div class="select_wrapper">
+        <select v-model="localStatus" @change="handleFilterChange"
+          class="filters__status-select filters__select--primary">
+          <option value="all">Todos os status</option>
+          <option value="Reading">Lendo</option>
+          <option value="Read">Completo</option>
+          <option value="To be read">Para Ler</option>
+          <option value="DNF">Abondonados</option>
+        </select>
+      </div>
     </div>
 
-    <button v-if="bookStore.searchTerm || bookStore.filterStatus !== 'all'" @click="clearFilters" class="filters__clear-btn filters__btn--primary">
-      Limpar filtros
+    <button v-if="bookStore.searchTerm || bookStore.filterStatus !== 'all'" @click="clearFilters"
+      class="filters__clear-btn filters__btn--primary">
+      <span>Limpar filtros</span>
     </button>
   </div>
 </template>

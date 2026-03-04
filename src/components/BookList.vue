@@ -178,7 +178,7 @@ const handleEditBook = (book) => {
 .book-list__empty-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text);
+  color: var(--black);
   margin-bottom: 0.5rem;
 }
 

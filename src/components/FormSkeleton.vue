@@ -222,7 +222,7 @@
   border-radius: 8px;
   background: var(--white);
   width: 100%;
-  color: var(--text);
+  color: var(--black);
   font-family: inherit;
   font-size: var(--font);
   transition: border-color 0.2s ease;
@@ -240,7 +240,7 @@
   border-radius: 8px;
   background: var(--white);
   width: 100%;
-  color: var(--text);
+  color: var(--black);
   font-family: inherit;
   font-size: var(--font);
   cursor: pointer;
@@ -265,7 +265,7 @@
   border-radius: 8px;
   background: var(--white);
   width: 100%;
-  color: var(--text);
+  color: var(--black);
   font-family: inherit;
   font-size: var(--font);
   transition: border-color 0.2s ease;

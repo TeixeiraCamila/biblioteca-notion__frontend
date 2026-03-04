@@ -28,7 +28,6 @@ export const useUserStore = defineStore('user', {
   actions: {
     // fetch single page of users
     async fetchUsers(startCursor = undefined, pageSize = 100) {
-      console.log('fetchUsers')
 
       this.loading = true
       this.error = null
@@ -68,7 +67,6 @@ export const useUserStore = defineStore('user', {
 
     // fetch specific user by ID
     async fetchUser(userId) {
-      console.log('fetchUser')
       this.loading = true
       this.error = null
 

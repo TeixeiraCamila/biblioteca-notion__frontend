@@ -5,15 +5,11 @@ import { useBookStore } from '@/stores/bookStore'
 const bookStore = useBookStore()
 
 
-// onMounted(async () => {
-//   await bookStore.fetchTbrBooks()
-// })
-
 /**
  * Tenta recarregar lista em caso de erro
  */
 const handleRetry = async () => {
-  await bookStore.fetchTbrBooks()
+  await bookStore.fetchTbrBooks(undefined, 'To be read')
 }
 
 /**
@@ -28,16 +24,15 @@ const showEmptyState = computed(() => {
 
 <template>
   <div class="tbr-list">
-    <!-- Header -->
+
     <header class="tbr-list__header">
       <h1 class="tbr-list__title">To Be Read</h1>
-      <div class="tbr-list__tape" aria-hidden="true"></div>
       <p class="tbr-list__subtitle">
         {{ bookStore.tbrCount }} {{ bookStore.tbrCount === 1 ? 'livro' : 'livros' }} para ler
       </p>
     </header>
 
-    <!-- Estado de Erro -->
+
     <div v-if="bookStore.hasError && !bookStore.loadingTbr" class="tbr-list__error">
       <div class="tbr-list__error-icon">⚠️</div>
       <p class="tbr-list__error-message">{{ bookStore.error }}</p>
@@ -46,13 +41,13 @@ const showEmptyState = computed(() => {
       </button>
     </div>
 
-    <!-- Estado de Loading -->
+
     <div v-else-if="bookStore.loadingTbr" class="tbr-list__loading">
       <div class="tbr-list__spinner"></div>
       <p>Carregando livros...</p>
     </div>
 
-    <!-- Estado Vazio -->
+
     <div v-else-if="showEmptyState" class="tbr-list__empty">
       <div class="tbr-list__empty-icon">📚</div>
       <h2 class="tbr-list__empty-title">Lista vazia</h2>
@@ -61,7 +56,7 @@ const showEmptyState = computed(() => {
       </p>
     </div>
 
-    <!-- Grid de Livros -->
+
     <TransitionGroup v-else name="stamp" tag="div" class="tbr-list__grid">
       <div v-for="(book, index) in bookStore.tbrBooksList" :key="book.id" class="stamp-wrapper"
         :style="{ transform: `rotate(${index % 2 === 0 ? -2 : 2}deg)` }">
@@ -101,39 +96,24 @@ const showEmptyState = computed(() => {
 /* ===== HEADER ===== */
 .tbr-list__header {
   text-align: center;
-  margin-bottom: 4rem;
   position: relative;
   display: inline-block;
   left: 50%;
   transform: translateX(-50%);
+  background-image: url('../assets/images/cards/card_03_stats/tape-title.webp');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-origin: content-box;
+  width: 100%;
+  padding: 2rem 2rem 1.5rem 1.5rem;
+  ;
 }
 
 .tbr-list__title {
   font-size: 2.5rem;
   color: #4a3f35;
-  margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 2px;
-  background: #fdf6e3;
-  padding: 0.5rem 2rem;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.tbr-list__tape {
-  position: absolute;
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 30px;
-  background: rgba(210, 180, 140, 0.4);
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.tbr-list__subtitle {
-  color: #8c7b6a;
-  font-style: italic;
-  margin-top: 0.5rem;
 }
 
 /* ===== ESTADOS (ERROR, LOADING, EMPTY) ===== */

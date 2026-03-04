@@ -23,8 +23,10 @@ const props = defineProps({
 .card-status__tape .card-status__text {
   position: absolute;
   top: 40%;
-  left: 50%;
+  left: 45%;
   transform: translate(-40%, -50%);
+  width: 60%;
+  text-align: center;
 }
 </style>
 

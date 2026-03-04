@@ -58,20 +58,14 @@ const startEndString = computed(() => {
   return `Lido de ${start} até ${end}`
 })
 
-// ✅ CORRIGIDO: Emite o objeto book completo para o componente pai
 const handleEdit = () => {
   emit('edit', props.book)
 }
 
-// ✅ CORRIGIDO: Emite evento de delete ao invés de chamar store diretamente
 const handleDelete = () => {
   emit('delete', props.book)
-}
+};
 
-// ✅ NOVO: Emite evento de close para fechar modal com animação
-const handleClose = () => {
-  emit('close')
-}
 </script>
 
 <template>
@@ -115,14 +109,14 @@ const handleClose = () => {
         </ul>
       </div>
 
-        <div class="card-back__actions" v-if="!userStore.isGuest">
-          <button class="card-back__action-btn" @click="handleEdit">
-            <PencilLine />
-          </button>
-          <button class="card-back__action-btn" @click="handleDelete">
-            <Trash />
-          </button>
-        </div>
+      <div class="card-back__actions" v-if="!userStore.isGuest">
+        <button class="card-back__action-btn" @click="handleEdit">
+          <PencilLine />
+        </button>
+        <button class="card-back__action-btn" @click="handleDelete">
+          <Trash />
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -160,6 +154,7 @@ const handleClose = () => {
 .card-back__genres {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .card-back__genres .card-back__genre {
@@ -181,7 +176,7 @@ const handleClose = () => {
   padding: 4px;
   border-radius: 12px;
   cursor: pointer;
-  color: var(--text);
+  color: var(--black);
 }
 
 .card-back__actions .card-back__action-btn:hover {

@@ -1,35 +1,3 @@
-<template>
-  <div class="login-view__container">
-    <div class="login-view__card">
-      <h2>Login</h2>
-
-      <form @submit.prevent="handleLogin">
-        <div class="login-view__form-group">
-          <label for="name">Nome</label>
-          <input id="name" v-model="name" type="text" placeholder="Digite seu nome" required />
-        </div>
-
-        <div class="login-view__form-group">
-          <label for="email">Email</label>
-          <input id="email" v-model="email" type="email" placeholder="Digite seu email" required />
-        </div>
-
-        <button type="submit">Entrar</button>
-      </form>
-
-      <div class="login-view__guest-container">
-        <button type="button" class="login-view__guest-btn" @click="handleGuestLogin">
-          Entrar como Visitante
-        </button>
-      </div>
-
-      <div v-if="error" class="login-view__error-message">
-        {{ error }}
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -81,8 +49,41 @@ const handleGuestLogin = () => {
   error.value = ''
   userStore.setGuestUser()
   router.push({ name: 'home' })
-}
+};
 </script>
+
+<template>
+  <div class="login-view__container">
+    <div class="login-view__card">
+      <h2>Login</h2>
+
+      <form @submit.prevent="handleLogin">
+        <div class="login-view__form-group">
+          <label for="name">Nome</label>
+          <input id="name" v-model="name" type="text" placeholder="Digite seu nome" required />
+        </div>
+
+        <div class="login-view__form-group">
+          <label for="email">Email</label>
+          <input id="email" v-model="email" type="email" placeholder="Digite seu email" required />
+        </div>
+
+        <button type="submit"><span>Entrar</span></button>
+      </form>
+
+      <div class="login-view__guest-container">
+        <button type="button" class="login-view__guest-btn" @click="handleGuestLogin">
+          <span> Entrar como Visitante</span>
+        </button>
+      </div>
+
+      <div v-if="error" class="login-view__error-message">
+        {{ error }}
+      </div>
+    </div>
+  </div>
+</template>
+
 
 <style scoped>
 .login-view__container {
@@ -97,7 +98,10 @@ const handleGuestLogin = () => {
   display: flex;
   align-items: center;
 }
+.login-view__container button {
+  width: 100%;
 
+}
 .login-view__card {
   padding: 40px;
   transform: rotate(-5deg);
@@ -123,44 +127,6 @@ const handleGuestLogin = () => {
   font-size: 14px;
 }
 
-.login-view__form-group input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  border-bottom: 2px solid var(--accent_muted);
-  border-left: 2px solid var(--accent_muted);
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.3s;
-  box-sizing: border-box;
-}
-
-.login-view__form-group input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-.login-view__card button {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-}
-
-.login-view__card button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 20px var(--accent_muted);
-}
 
 .login-view__error-message {
   margin-top: 20px;
@@ -175,26 +141,5 @@ const handleGuestLogin = () => {
 .login-view__guest-container {
   margin-top: 20px;
   text-align: center;
-}
-
-.login-view__guest-btn {
-  width: 100%;
-  padding: 12px;
-  background: transparent;
-  color: var(--accent);
-  border: 2px solid var(--accent);
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition:
-    transform 0.2s,
-    background-color 0.2s;
-}
-
-.login-view__guest-btn:hover {
-  background: var(--accent);
-  color: white;
-  transform: translateY(-2px);
 }
 </style>
