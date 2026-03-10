@@ -7,7 +7,7 @@ import { useNotifications } from '@/composables/useNotifications'
 import FormSection from './FormSection.vue'
 import FormField from './FormField.vue'
 import FormActions from './FormActions.vue'
-
+import Button from './ui/Button.vue'
 const props = defineProps({
   book: {
     type: Object,
@@ -287,7 +287,7 @@ const handleCancel = () => {
       <h2 class="book-form__title">
         {{ isEdit ? 'Editar Livro' : 'Adicionar Novo Livro' }}
       </h2>
-      <button @click="handleCancel" class="book-form__close-btn">×</button>
+      <Button @click="handleCancel" class="book-form__close-btn" variant="secondary">×</Button>
     </div>
 
     <form @submit.prevent="handleSubmit" class="book-form__content">

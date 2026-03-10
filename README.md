@@ -77,15 +77,75 @@ O Biblioteca Notion é uma aplicação web moderna que sincroniza seus dados de 
 
 ## 🏗️ Estrutura do Projeto
 
+### Estrutura de Componentes
+
+A aplicação segue uma arquitetura baseada em camadas para melhor organização e escalabilidade:
+
 ```
 src/
 ├── components/          # Componentes Vue reutilizáveis
-│   ├── BookCard/       # Componentes de cartão de livro
-│   ├── Stack/          # Componentes de pilha de cartões
-│   ├── BookForm.vue    # Formulário de cadastro/edição
-│   ├── BookList.vue    # Lista de livros
-│   ├── Filters.vue     # Filtros e busca
-│   └── ...
+│   ├── ui/             # Componentes de UI genéricos
+│   │   ├── Button.vue
+│   │   ├── Input.vue
+│   │   ├── Modal.vue
+│   │   ├── Card.vue
+│   │   ├── Badge.vue
+│   │   └── Skeleton/
+│   │       ├── BookCardSkeleton.vue
+│   │       └── FormSkeleton.vue
+│   │
+│   ├── forms/          # Componentes de formulário
+│   │   ├── FormField.vue
+│   │   ├── FormSection.vue
+│   │   ├── FormActions.vue
+│   │   └── BookForm/
+│   │       ├── BookForm.vue
+│   │       ├── BasicInfoSection.vue
+│   │       ├── StatusSection.vue
+│   │       ├── PublicationSection.vue
+│   │       └── MetadataSection.vue
+│   │
+│   ├── books/          # Componentes específicos de livros
+│   │   ├── BookCard/
+│   │   │   ├── BookCard.vue
+│   │   │   ├── CardFront.vue
+│   │   │   ├── CardBack.vue
+│   │   │   └── CardStatus.vue
+│   │   ├── BookList/
+│   │   │   ├── BookList.vue
+│   │   │   └── BookGrid.vue
+│   │   ├── BookDetails/
+│   │   │   ├── BookDetails.vue
+│   │   │   └── BookInfo.vue
+│   │   └── ReadingProgress/
+│   │       ├── ReadingProgress.vue
+│   │       └── ProgressChart.vue
+│   │
+│   ├── layout/         # Componentes de layout
+│   │   ├── Header.vue
+│   │   ├── Sidebar.vue
+│   │   ├── Layout.vue
+│   │   └── Container.vue
+│   │
+│   ├── navigation/     # Componentes de navegação
+│   │   ├── Pagination.vue
+│   │   ├── Filters.vue
+│   │   └── SearchBar.vue
+│   │
+│   ├── feedback/       # Componentes de feedback
+│   │   ├── Notification.vue
+│   │   ├── ToastContainer.vue
+│   │   └── ConfirmDialog.vue
+│   │
+│   └── features/       # Componentes de features específicas
+│       ├── Stack/
+│       │   ├── CardStackView.vue
+│       │   └── CardIntro.vue
+│       ├── TBRList/
+│       │   └── TBRList.vue
+│       └── ReadingList/
+│           └── ReadingList.vue
+│
 ├── views/              # Páginas da aplicação
 │   ├── HomeView.vue    # Página inicial
 │   ├── CreateBookView.vue # Página de criação
@@ -110,6 +170,341 @@ src/
     ├── images/         # Imagens e ícones
     └── main.css        # Estilos principais
 ```
+
+### Camadas de Componentes
+
+#### 1. **UI Components (src/components/ui/)**
+Componentes genéricos e reutilizáveis que não possuem lógica de negócio específica.
+
+**Princípios:**
+- Puros e sem estado interno
+- Props para configuração
+- Estilização baseada em CSS-in-JS ou classes CSS
+- Acessíveis (ARIA attributes)
+
+**Exemplos:**
+```vue
+<!-- Button.vue -->
+<template>
+  <button 
+    :class="['btn', `btn--${variant}`, { 'btn--disabled': disabled }]"
+    :disabled="disabled"
+    @click="$emit('click')"
+  >
+    <slot></slot>
+  </button>
+</template>
+
+<script setup>
+defineProps({
+  variant: { type: String, default: 'primary' },
+  disabled: { type: Boolean, default: false }
+})
+defineEmits(['click'])
+</script>
+```
+
+#### 2. **Form Components (src/components/forms/)**
+Componentes especializados para formulários com validação e feedback visual.
+
+**Princípios:**
+- Validação integrada
+- Feedback visual para erros
+- Integração com sistemas de formulário
+- Acessibilidade avançada
+
+**Exemplos:**
+```vue
+<!-- FormField.vue -->
+<template>
+  <div class="form-field">
+    <label v-if="label" :for="id">{{ label }}</label>
+    <input 
+      :id="id"
+      v-model="model"
+      :type="type"
+      :placeholder="placeholder"
+      :class="{ 'has-error': error }"
+    />
+    <span v-if="error" class="error-message">{{ error }}</span>
+  </div>
+</template>
+```
+
+#### 3. **Feature Components (src/components/features/)**
+Componentes que representam funcionalidades completas da aplicação.
+
+**Princípios:**
+- Auto-contidos
+- Gerenciam seu próprio estado quando necessário
+- Comunicação através de eventos
+- Testáveis isoladamente
+
+**Exemplos:**
+```vue
+<!-- BookList.vue -->
+<template>
+  <div class="book-list">
+    <Filters @filter="handleFilter" />
+    <BookGrid :books="books" @edit="openEditModal" />
+    <Pagination 
+      :has-next="hasNextPage" 
+      :has-previous="hasPreviousPage"
+      @next="loadNextPage"
+      @previous="loadPreviousPage"
+    />
+  </div>
+</template>
+```
+
+#### 4. **Layout Components (src/components/layout/)**
+Componentes que definem a estrutura visual da aplicação.
+
+**Princípios:**
+- Não possuem lógica de negócio
+- Focados em organização visual
+- Flexíveis para diferentes conteúdos
+- Responsivos por padrão
+
+### Guidelines para Criação de Novos Componentes
+
+#### 1. **Decisão de Estrutura**
+Antes de criar um componente, decida a estrutura adequada:
+
+**Componente Simples (arquivo único):**
+- Menos de 100 linhas
+- Lógica simples
+- Uso limitado
+
+**Componente Complexo (sub-pasta):**
+- Mais de 100 linhas
+- Lógica complexa
+- Múltiplas variações
+- Uso extensivo
+
+#### 2. **Padrões de Nomeação**
+- **Arquivos**: PascalCase (ex: `BookCard.vue`)
+- **Pastas**: PascalCase (ex: `BookCard/`)
+- **Componentes**: PascalCase
+- **Variáveis**: camelCase
+- **Classes CSS**: kebab-case
+
+#### 3. **Estrutura de Arquivos**
+Para componentes complexos, siga este padrão:
+
+```
+ComponentName/
+├── ComponentName.vue        # Componente principal
+├── ComponentName.types.ts   # Tipos TypeScript (se aplicável)
+├── ComponentName.stories.ts # Stories para Storybook (se aplicável)
+├── ComponentName.test.ts    # Testes unitários
+└── __tests__/               # Testes de integração
+    └── ComponentName.spec.ts
+```
+
+#### 4. **Boas Práticas de Desenvolvimento**
+
+**Props:**
+```vue
+<script setup>
+// Sempre defina tipos e valores padrão
+const props = defineProps({
+  title: {
+    type: String,
+    required: true,
+    validator: (value) => value.length > 0
+  },
+  variant: {
+    type: String,
+    default: 'primary',
+    validator: (value) => ['primary', 'secondary', 'danger'].includes(value)
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  }
+})
+</script>
+```
+
+**Eventos:**
+```vue
+<script setup>
+// Defina eventos claramente
+const emit = defineEmits(['update:modelValue', 'submit', 'cancel'])
+
+// Use eventos para comunicação
+const handleSubmit = () => {
+  emit('submit', formData)
+}
+</script>
+```
+
+**Slots:**
+```vue
+<template>
+  <div class="card">
+    <header v-if="$slots.header">
+      <slot name="header"></slot>
+    </header>
+    
+    <main>
+      <slot></slot>
+    </main>
+    
+    <footer v-if="$slots.footer">
+      <slot name="footer"></slot>
+    </footer>
+  </div>
+</template>
+```
+
+#### 5. **Estilização**
+- Use scoped styles sempre que possível
+- Prefira CSS-in-JS para componentes pequenos
+- Use arquivos CSS separados para estilos complexos
+- Mantenha consistência com o design system
+
+```vue
+<style scoped>
+.component-name {
+  /* Estilos do componente */
+}
+
+.component-name__element {
+  /* Elementos específicos */
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .component-name {
+    /* Estilos mobile */
+  }
+}
+</style>
+```
+
+#### 6. **Acessibilidade**
+- Sempre inclua atributos ARIA quando necessário
+- Use labels para inputs
+- Implemente navegação por teclado
+- Teste com leitores de tela
+
+```vue
+<template>
+  <button 
+    :aria-label="ariaLabel"
+    :aria-expanded="isOpen"
+    @keydown.escape="close"
+  >
+    {{ label }}
+  </button>
+</template>
+```
+
+#### 7. **Performance**
+- Use `v-memo` para listas grandes
+- Implemente lazy loading para imagens
+- Evite computações pesadas no template
+- Use `computed` para cálculos complexos
+
+```vue
+<script setup>
+// Computações pesadas devem ser computed
+const expensiveComputation = computed(() => {
+  return items.value.filter(item => item.active)
+    .map(item => ({ ...item, computed: true }))
+})
+</script>
+```
+
+#### 8. **Testes**
+Todo componente deve ter:
+- Testes unitários para lógica de negócios
+- Testes de integração para fluxos completos
+- Testes de acessibilidade
+- Testes de responsividade
+
+```javascript
+// ComponentName.test.ts
+import { mount } from '@vue/test-utils'
+import ComponentName from './ComponentName.vue'
+
+describe('ComponentName', () => {
+  it('should render correctly', () => {
+    const wrapper = mount(ComponentName, {
+      props: { title: 'Test' }
+    })
+    expect(wrapper.text()).toContain('Test')
+  })
+})
+```
+
+#### 9. **Documentação**
+Cada componente deve incluir:
+- Comentário de documentação no topo
+- Exemplos de uso
+- Descrição de props e eventos
+- Notas sobre acessibilidade
+
+```vue
+<script setup>
+/**
+ * Componente de cartão de livro
+ * 
+ * @description Exibe informações de um livro com animações e interações
+ * @example
+ * <BookCard :book="book" @edit="handleEdit" />
+ * 
+ * @props
+ * - book: Object (required) - Dados do livro
+ * - editable: Boolean (optional) - Permite edição
+ * 
+ * @events
+ * - edit: Emitted when edit button is clicked
+ * - delete: Emitted when delete button is clicked
+ */
+</script>
+```
+
+#### 10. **Integração com Stores**
+- Use stores para estado global
+- Evite props drilling
+- Comunique-se através de eventos quando necessário
+
+```vue
+<script setup>
+import { useBookStore } from '@/stores/bookStore'
+
+const bookStore = useBookStore()
+
+const handleDelete = async () => {
+  await bookStore.deleteBook(props.book.id)
+  emit('deleted', props.book.id)
+}
+</script>
+```
+
+### Fluxo de Criação de Componentes
+
+1. **Análise**: Identifique a necessidade e o escopo do componente
+2. **Planejamento**: Defina props, eventos e slots necessários
+3. **Criação**: Implemente o componente seguindo os padrões
+4. **Testes**: Crie testes unitários e de integração
+5. **Documentação**: Adicione documentação e exemplos
+6. **Review**: Revise o código e os testes
+7. **Deploy**: Integre ao fluxo de desenvolvimento
+
+### Ferramentas Recomendadas
+
+- **ESLint**: Para manter a qualidade do código
+- **Prettier**: Para formatação consistente
+- **TypeScript**: Para tipagem e segurança
+- **Storybook**: Para documentação visual de componentes
+- **Vitest**: Para testes unitários
+- **Cypress**: Para testes end-to-end
+
+Esta estrutura e estes guidelines garantem que a aplicação seja escalável, manutenível e de alta qualidade.
 
 ## 🔧 Comandos Disponíveis
 

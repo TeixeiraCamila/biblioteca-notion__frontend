@@ -1,4 +1,3 @@
-// src/services/api.js
 // Comunicação com backend
 
 import axios from 'axios'

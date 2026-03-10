@@ -6,7 +6,7 @@ import BookCard from './BookCard.vue'
 import BookCardSkeleton from './BookCardSkeleton.vue'
 import Pagination from './Pagination.vue'
 import Filters from './Filters.vue'
-
+import Button from './ui/Button.vue'
 const bookStore = useBookStore()
 const router = useRouter()
 
@@ -46,9 +46,9 @@ const handleEditBook = (book) => {
     <div v-else-if="bookStore.hasError" class="book-list__state book-list__state--error">
       <div class="book-list__error-icon">⚠️</div>
       <p class="book-list__error-message">{{ bookStore.error }}</p>
-      <button class="book-list__retry-btn" @click="bookStore.fetchBooks()">
+      <Button class="book-list__retry-btn" @click="bookStore.fetchBooks()">
         Tentar Novamente
-      </button>
+      </Button>
     </div>
 
     <!-- Estado Vazio -->
@@ -135,9 +135,8 @@ const handleEditBook = (book) => {
 
 /* Estado de Erro */
 .book-list__state--error {
-  background: rgba(239, 68, 68, 0.05);
   border-radius: 12px;
-  max-width: 500px;
+  width: 100%;
   margin: 0 auto;
 }
 

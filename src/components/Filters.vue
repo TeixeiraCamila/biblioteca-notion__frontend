@@ -1,12 +1,14 @@
 <script setup>
 import { ref } from 'vue'
 import { useBookStore } from '@/stores/bookStore'
+import Button from './ui/Button.vue'
 
 const bookStore = useBookStore()
 const localSearch = ref(bookStore.searchTerm)
 const localStatus = ref(bookStore.filterStatus)
 
 const handleSearch = () => {
+  if (localSearch.value.trim() === bookStore.searchTerm) return
   bookStore.search(localSearch.value)
 }
 
@@ -30,9 +32,9 @@ const clearFilters = () => {
         <input type="text" placeholder="Buscar por título ou autor..." v-model="localSearch" @keyup.enter="handleSearch"
           class="filters__search-input" />
       </div>
-      <button @click="handleSearch" class="filters__search-btn filters__btn--primary">
+      <Button @click="handleSearch" variant="primary">
         <span> Buscar </span>
-      </button>
+      </Button>
     </div>
 
     <div class="filters__filter-status">
@@ -48,10 +50,10 @@ const clearFilters = () => {
       </div>
     </div>
 
-    <button v-if="bookStore.searchTerm || bookStore.filterStatus !== 'all'" @click="clearFilters"
+    <Button v-if="bookStore.searchTerm || bookStore.filterStatus !== 'all'" @click="clearFilters"
       class="filters__clear-btn filters__btn--primary">
       <span>Limpar filtros</span>
-    </button>
+    </Button>
   </div>
 </template>
 

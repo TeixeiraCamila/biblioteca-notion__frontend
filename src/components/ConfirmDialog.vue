@@ -1,31 +1,7 @@
-<template>
-  <Teleport to="body">
-    <Transition name="fade">
-      <div v-if="isOpen" class="confirm-dialog__overlay" @click="handleCancel">
-        <div class="confirm-dialog__content" @click.stop>
-          <div class="confirm-dialog__header">
-            <h3 class="confirm-dialog__title">{{ title }}</h3>
-          </div>
-
-          <div class="confirm-dialog__body">
-            <p>{{ message }}</p>
-          </div>
-
-          <div class="confirm-dialog__footer">
-            <button @click="handleCancel" class="confirm-dialog__btn confirm-dialog__btn--secondary">Cancelar</button>
-            <button @click="handleConfirm" class="confirm-dialog__btn confirm-dialog__btn--danger">
-              {{ confirmText }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
-</template>
-
 <script setup>
 import { ref } from 'vue'
 import { useNotifications } from '@/composables/useNotifications'
+import Button from './ui/Button.vue'
 
 const props = defineProps({
   title: { type: String, default: 'Confirmar ação' },
@@ -66,7 +42,35 @@ defineExpose({
   open,
   close,
 });
+
 </script>
+
+<template>
+  <Teleport to="body">
+    <Transition name="fade">
+      <div v-if="isOpen" class="confirm-dialog__overlay" @click="handleCancel">
+        <div class="confirm-dialog__content" @click.stop>
+          <div class="confirm-dialog__header">
+            <h3 class="confirm-dialog__title">{{ title }}</h3>
+          </div>
+
+          <div class="confirm-dialog__body">
+            <p>{{ message }}</p>
+          </div>
+
+          <div class="confirm-dialog__footer">
+            <Button @click="handleCancel" class="confirm-dialog__btn confirm-dialog__btn--secondary">Cancelar</Button>
+            <Button @click="handleConfirm" class="confirm-dialog__btn confirm-dialog__btn--danger">
+              {{ confirmText }}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
+</template>
+
+
 
 <style scoped>
 .confirm-dialog__overlay {

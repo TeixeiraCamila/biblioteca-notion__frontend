@@ -4,7 +4,7 @@ import { useBookStore } from '@/stores/bookStore'
 import { useUserStore } from '@/stores/userStore'
 import { useNotifications } from '@/composables/useNotifications'
 import { PencilLine, Trash } from 'lucide-vue-next'
-
+import Button from './ui/Button.vue'
 const bookStore = useBookStore()
 const userStore = useUserStore()
 const { addNotification } = useNotifications()
@@ -159,9 +159,9 @@ const hasAdditionalNotes = (book) => {
     <div v-if="bookStore.hasError && !bookStore.loadingTbr" class="reading-list__error">
       <div class="reading-list__error-icon">⚠️</div>
       <p class="reading-list__error-message">{{ bookStore.error }}</p>
-      <button class="reading-list__retry-btn" @click="bookStore.fetchTbrBooks(undefined, 'Reading')">
+      <Button class="reading-list__retry-btn" @click="bookStore.fetchTbrBooks(undefined, 'Reading')">
         Tentar Novamente
-      </button>
+      </Button>
     </div>
 
     <div v-else-if="bookStore.loadingTbr" class="reading-list__loading">
@@ -263,14 +263,14 @@ const hasAdditionalNotes = (book) => {
             </div>
 
             <div v-if="!userStore.isGuest" class="reading-card__actions">
-              <button class="reading-card__action-btn reading-card__action-edit" @click="$emit('edit', book)">
+              <Button class="reading-card__action-btn reading-card__action-edit" @click="$emit('edit', book)">
                 <PencilLine size="18" />
                 <span>Editar</span>
-              </button>
-              <button class="reading-card__action-btn reading-card__action-delete" @click="$emit('delete', book)">
+              </Button>
+              <Button class="reading-card__action-btn reading-card__action-delete" @click="$emit('delete', book)">
                 <Trash size="18" />
                 <span>Excluir</span>
-              </button>
+              </Button>
             </div>
           </div>
         </article>

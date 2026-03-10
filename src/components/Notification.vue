@@ -1,6 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 
+import Button from './ui/Button.vue';
+
 defineProps({
   message: String,
   type: {
@@ -37,7 +39,7 @@ const icon = computed(() => {
     >
       <span class="notification__icon">{{ icon }}</span>
       <span class="notification__message">{{ message }}</span>
-      <button @click="$emit('close')" class="notification__close-btn">×</button>
+      <Button @click="$emit('close')" class="notification__close-btn">×</Button>
     </div>
   </Transition>
 </template>

@@ -1,24 +1,7 @@
-<template>
-  <div class="form-actions">
-    <button
-      type="submit"
-      :disabled="isSubmitting || isLoading"
-      class="form-actions__btn form-actions__btn--primary"
-    >
-      {{ isSubmitting ? 'Salvando...' : submitText }}
-    </button>
-
-    <button
-      type="button"
-      @click="$emit('cancel')"
-      class="form-actions__btn form-actions__btn--secondary"
-    >
-      {{ cancelText }}
-    </button>
-  </div>
-</template>
-
 <script setup>
+import { defineProps, defineEmits } from 'vue'
+import Button from './ui/Button.vue'
+
 defineProps({
   isSubmitting: {
     type: Boolean,
@@ -38,8 +21,29 @@ defineProps({
   }
 })
 
-defineEmits(['cancel'])
+defineEmits(['cancel']);
 </script>
+<template>
+  <div class="form-actions">
+    <Button
+      type="submit"
+      :disabled="isSubmitting || isLoading"
+      class="form-actions__btn form-actions__btn--primary"
+    >
+      {{ isSubmitting ? 'Salvando...' : submitText }}
+    </Button>
+
+    <Button
+      type="button"
+      @click="$emit('cancel')"
+      class="form-actions__btn form-actions__btn--secondary"
+    >
+      {{ cancelText }}
+    </Button>
+  </div>
+</template>
+
+
 
 <style scoped>
 .form-actions {

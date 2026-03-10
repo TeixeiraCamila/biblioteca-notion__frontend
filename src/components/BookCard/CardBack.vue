@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import CardStatus from './CardStatus.vue'
+import Button from '../ui/Button.vue'
 import { PencilLine, Trash, X } from 'lucide-vue-next'
 
 const props = defineProps({
@@ -110,12 +111,12 @@ const handleDelete = () => {
       </div>
 
       <div class="card-back__actions" v-if="!userStore.isGuest">
-        <button class="card-back__action-btn" @click="handleEdit">
+        <Button class="card-back__action-btn" @click="handleEdit" variant="secondary">
           <PencilLine />
-        </button>
-        <button class="card-back__action-btn" @click="handleDelete">
+        </Button>
+        <Button class="card-back__action-btn" @click="handleDelete" variant="secondary">
           <Trash />
-        </button>
+        </Button>
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, computed } from 'vue'
 import { useBookStore } from '@/stores/bookStore'
-
+import Button from './ui/Button.vue'
 const bookStore = useBookStore()
 
 
@@ -36,9 +36,9 @@ const showEmptyState = computed(() => {
     <div v-if="bookStore.hasError && !bookStore.loadingTbr" class="tbr-list__error">
       <div class="tbr-list__error-icon">⚠️</div>
       <p class="tbr-list__error-message">{{ bookStore.error }}</p>
-      <button class="tbr-list__retry-btn" @click="handleRetry">
+      <Button class="tbr-list__retry-btn" @click="handleRetry">
         Tentar Novamente
-      </button>
+      </Button>
     </div>
 
 

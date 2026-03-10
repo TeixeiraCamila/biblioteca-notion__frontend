@@ -1,3 +1,18 @@
+<script setup>
+import { defineProps, defineEmits } from 'vue'
+import Button from './ui/Button.vue'
+
+defineProps({
+  bookCount: { type: Number, required: true },
+  pageSize: { type: Number, required: true },
+  hasPrevious: { type: Boolean, required: true },
+  hasNext: { type: Boolean, required: true },
+})
+
+defineEmits(['previous', 'next', 'changeSize']);
+
+const selects = [4, 8, 12, 18, 24, 30];
+</script>
 <template>
   <div class="pagination">
     <div class="pagination__info">
@@ -5,13 +20,13 @@
     </div>
 
     <div class="pagination__controls">
-      <button @click="$emit('previous')" :disabled="!hasPrevious">
+      <Button @click="$emit('previous')" :disabled="!hasPrevious">
         <span>← Anterior</span>
-      </button>
+      </Button>
 
-      <button @click="$emit('next')" :disabled="!hasNext">
+      <Button @click="$emit('next')" :disabled="!hasNext">
         <span>Próximo →</span>
-      </button>
+      </Button>
     </div>
 
     <div class="pagination__page-size-selector">
@@ -28,18 +43,7 @@
   </div>
 </template>
 
-<script setup>
-defineProps({
-  bookCount: { type: Number, required: true },
-  pageSize: { type: Number, required: true },
-  hasPrevious: { type: Boolean, required: true },
-  hasNext: { type: Boolean, required: true },
-})
 
-defineEmits(['previous', 'next', 'changeSize']);
-
-const selects = [4, 8, 12, 18, 24, 30];
-</script>
 
 <style scoped>
 .pagination {
@@ -94,26 +98,6 @@ const selects = [4, 8, 12, 18, 24, 30];
   gap: 0.5rem;
   font-size: 0.875rem;
   color: #6b7280;
-}
-
-.pagination__select--primary {
-  padding: 0.375rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  background: var(--white);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.pagination__select--primary:hover {
-  border-color: var(--accent);
-}
-
-.pagination__select--primary:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
 @media (max-width: 640px) {

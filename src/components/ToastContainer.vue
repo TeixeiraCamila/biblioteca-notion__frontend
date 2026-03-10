@@ -1,6 +1,5 @@
 <script setup>
-import { computed } from 'vue'
-
+import Button from './ui/Button.vue'
 const props = defineProps({
   notifications: {
     type: Array,
@@ -25,7 +24,7 @@ const removeNotification = (id) => {
       >
         <span class="toast__icon">{{ notification.type === 'success' ? '✅' : notification.type === 'error' ? '❌' : notification.type === 'warning' ? '⚠️' : 'ℹ️' }}</span>
         <span class="toast__message">{{ notification.message }}</span>
-        <button @click="removeNotification(notification.id)" class="toast__close">×</button>
+        <Button @click="removeNotification(notification.id)" class="toast__close">×</Button>
       </div>
     </TransitionGroup>
   </div>

@@ -2,8 +2,9 @@
 import { defineAsyncComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
-import CardIntro from '@/components/Stack/CardIntro.vue'
 import { useBookStore } from '@/stores/bookStore'
+import CardIntro from '@/components/Stack/CardIntro.vue'
+import Button from '@/components/ui/Button.vue'
 
 const bookStore = useBookStore()
 const userStore = useUserStore()
@@ -54,13 +55,13 @@ const onSlideChange = (swiper) => {
       <div class="stack-view__card stack-view__book-list">
         <BookList />
 
-        <button v-if="!userStore.isGuest" class="fab" aria-label="Adicionar novo livro" @click="navigateToCreate">
+        <Button v-if="!userStore.isGuest" class="fab" aria-label="Adicionar novo livro" @click="navigateToCreate">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true">
             <path d="M12 4V20M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"
               stroke-linejoin="round" />
           </svg>
-        </button>
+        </Button>
       </div>
     </SwiperSlide>
 

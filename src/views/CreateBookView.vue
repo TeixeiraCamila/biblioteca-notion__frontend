@@ -1,21 +1,3 @@
-<template>
-  <div class="create-book-view">
-    <header class="create-book-view__header">
-      <router-link to="/" class="create-book-view__link"> ← Voltar </router-link>
-    </header>
-
-    <main class="create-book-view__content">
-      <FormSkeleton v-if="isLoading" />
-      <div v-else-if="error" class="create-book-view__error">
-        <h3>Erro ao carregar livro</h3>
-        <p>{{ error }}</p>
-        <button @click="loadBook" class="create-book-view__retry-btn">Tentar novamente</button>
-      </div>
-      <BookForm v-else :book="book" :is-edit="isEdit" @submit="handleSubmit" @cancel="handleCancel" />
-    </main>
-  </div>
-</template>
-
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -23,7 +5,7 @@ import { useBookStore } from '@/stores/bookStore'
 import { useNotifications } from '@/composables/useNotifications'
 import BookForm from '@/components/BookForm.vue'
 import FormSkeleton from '@/components/FormSkeleton.vue'
-
+import Button from '@/components/ui/Button.vue'
 const { addNotification } = useNotifications()
 
 const route = useRoute()
@@ -80,6 +62,25 @@ const handleCancel = () => {
   router.push('/')
 };
 </script>
+
+
+<template>
+  <div class="create-book-view">
+    <header class="create-book-view__header">
+      <router-link to="/" class="create-book-view__link"> ← Voltar </router-link>
+    </header>
+
+    <main class="create-book-view__content">
+      <FormSkeleton v-if="isLoading" />
+      <div v-else-if="error" class="create-book-view__error">
+        <h3>Erro ao carregar livro</h3>
+        <p>{{ error }}</p>
+        <Button @click="loadBook" class="create-book-view__retry-btn">Tentar novamente</Button>
+      </div>
+      <BookForm v-else :book="book" :is-edit="isEdit" @submit="handleSubmit" @cancel="handleCancel" />
+    </main>
+  </div>
+</template>
 
 <style scoped>
 .create-book-view {

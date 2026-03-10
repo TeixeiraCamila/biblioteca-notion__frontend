@@ -1,12 +1,16 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 export function useAnimatedModal(cardEl, randomTilt) {
-
   // Estados
   const isModalOpen = ref(false)
   const isModalVisible = ref(false)
-  const isFlipped = ref(false)
   const isAnimating = ref(false)
+
+  // Estado da face atual: 'front' ou 'back'
+  const currentFace = ref('front')
+
+  // Computed para saber se está virado para trás
+  const isFlipped = computed(() => currentFace.value === 'back')
 
   // Abre modal com animação suave
   const openAnimatedModal = () => {
@@ -23,17 +27,22 @@ export function useAnimatedModal(cardEl, randomTilt) {
       isModalVisible.value = true
     })
 
-    // Pequeno delay antes de fazer o flip
+    // Abre no front e depois de alguns segundos muda para o back
+    currentFace.value = 'front'
+
+    // Depois de alguns segundos muda para o back
     setTimeout(() => {
-      isFlipped.value = true
-    }, 200)
+      flipToBack()
+    }, 2000)
   }
 
   // Fecha modal
   const closeModal = () => {
     // Inicia fade-out
     isModalVisible.value = false
-    isFlipped.value = false
+
+    // Garante que termina no front antes de fechar
+    currentFace.value = 'front'
 
     // Aguarda animação terminar antes de destruir o modal
     setTimeout(() => {
@@ -47,7 +56,9 @@ export function useAnimatedModal(cardEl, randomTilt) {
   const closeModalWithAnimation = () => {
     // Inicia fade-out
     isModalVisible.value = false
-    isFlipped.value = false
+
+    // Garante que termina no front antes de fechar
+    currentFace.value = 'front'
 
     // Aguarda animação terminar antes de destruir o modal
     setTimeout(() => {
@@ -57,19 +68,38 @@ export function useAnimatedModal(cardEl, randomTilt) {
     }, 300)
   }
 
-  // Alterna flip do card
+  // Vira para o verso
+  const flipToBack = () => {
+    currentFace.value = 'back'
+  }
+
+  // Vira para o frente
+  const flipToFront = () => {
+    currentFace.value = 'front'
+  }
+
+  // Alterna flip do card - sempre vai da face que está em display para a outra
   const toggleFlip = () => {
-    isFlipped.value = !isFlipped.value
+    currentFace.value = currentFace.value === 'front' ? 'back' : 'front'
+  }
+
+  // Vira para a face oposta
+  const flipToOpposite = () => {
+    toggleFlip()
   }
 
   return {
     isModalOpen,
     isModalVisible,
-    isFlipped,
     isAnimating,
+    currentFace,
+    isFlipped,
     openAnimatedModal,
     closeModal,
     closeModalWithAnimation,
+    flipToBack,
+    flipToFront,
     toggleFlip,
+    flipToOpposite,
   }
 }

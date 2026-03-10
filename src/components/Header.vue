@@ -5,6 +5,8 @@ import { useBookStore } from '@/stores/bookStore'
 import { useUserStore } from '@/stores/userStore'
 import router from '@/router'
 
+import Button from './ui/Button.vue'
+
 const bookStore = useBookStore()
 const userStore = useUserStore()
 
@@ -58,7 +60,7 @@ onUnmounted(() => {
 
         <router-link to="/criar" class="header__btn header__btn--add"> ➕ Adicionar Livro </router-link>
 
-        <button class="header__btn header__btn--logout" @click="handleLogout"><LogOut /></button>
+        <Button class="header__btn header__btn--logout" @click="handleLogout"><LogOut /></Button>
       </div>
     </div>
   </header>

@@ -1,9 +1,13 @@
+<script>
+import Button from './ui/Button.vue';
+</script>
+
 <template>
   <div class="form-skeleton">
     <!-- Header Section -->
     <div class="form-skeleton__header">
       <h2 class="skeleton-line skeleton-title">Adicionar Novo Livro</h2>
-      <button class="skeleton-line skeleton-close-btn">×</button>
+      <Button class="skeleton-line skeleton-close-btn">×</Button>
     </div>
 
     <!-- Form Content -->
@@ -113,8 +117,8 @@
 
       <!-- Actions -->
       <div class="form-skeleton__actions">
-        <button class="skeleton-line skeleton-button skeleton-button--primary">Salvar Livro</button>
-        <button class="skeleton-line skeleton-button skeleton-button--secondary">Cancelar</button>
+        <Button class="skeleton-line skeleton-button skeleton-button--primary">Salvar Livro</Button>
+        <Button class="skeleton-line skeleton-button skeleton-button--secondary">Cancelar</Button>
       </div>
     </form>
   </div>

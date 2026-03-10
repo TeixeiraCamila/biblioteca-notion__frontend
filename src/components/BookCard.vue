@@ -84,7 +84,7 @@ const handleEdit = (book) => {
     <Teleport to="body">
       <div v-if="isModalOpen" class="book-modal__overlay" :class="{ visible: isModalVisible }" @click.self="closeModal">
         <div class="book-modal__container" :class="{ visible: isModalVisible }" @click="toggleFlip">
-          <div class="book-card__flip" :class="{ 'book-card__flip--flipped': isFlipped }">
+          <div class="book-card__flip" :class="{ 'book-card__flip--flipped': isFlipped }" :style="{ '--random-tilt': `${randomTilt}deg` }">
             <div class="book-card__face book-card__face--front">
               <CardFront :book="book" :is-modal="true" :key="book.id" :rotate="`rotate(${randomTilt}deg)`" />
             </div>
@@ -189,28 +189,6 @@ const handleEdit = (book) => {
 
 .book-card__flip.book-card__flip--flipped {
   transform: rotateY(180deg);
-}
-
-/* Animação de flip suave em ambos os sentidos */
-.book-card__flip {
-  animation: flip-smooth 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes flip-smooth {
-  0% { transform: rotateY(0deg); }
-  50% { transform: rotateY(90deg) scale(1.02); }
-  100% { transform: rotateY(180deg); }
-}
-
-/* Animação reversa */
-.book-card__flip:not(.book-card__flip--flipped) {
-  animation: flip-smooth-reverse 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes flip-smooth-reverse {
-  0% { transform: rotateY(180deg); }
-  50% { transform: rotateY(90deg) scale(1.02); }
-  100% { transform: rotateY(0deg); }
 }
 
 /* FACES DO CARD (FRENTE E VERSO) */

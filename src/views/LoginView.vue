@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-
 import { useUserStore } from '@/stores/userStore'
+import Button from '@/components/ui/Button.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -68,13 +68,13 @@ const handleGuestLogin = () => {
           <input id="email" v-model="email" type="email" placeholder="Digite seu email" required />
         </div>
 
-        <button type="submit"><span>Entrar</span></button>
+        <Button type="submit"><span>Entrar</span></Button>
       </form>
 
       <div class="login-view__guest-container">
-        <button type="button" class="login-view__guest-btn" @click="handleGuestLogin">
+        <Button type="button" class="login-view__guest-btn" @click="handleGuestLogin">
           <span> Entrar como Visitante</span>
-        </button>
+        </Button>
       </div>
 
       <div v-if="error" class="login-view__error-message">
