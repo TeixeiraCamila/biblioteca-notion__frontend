@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 
-import Button from './ui/Button.vue';
+import Button from '../ui/Button.vue';
 
 defineProps({
   message: String,

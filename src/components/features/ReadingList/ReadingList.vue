@@ -1,13 +1,8 @@
 <script setup>
-import { onMounted, computed } from 'vue'
 import { useBookStore } from '@/stores/bookStore'
-import { useUserStore } from '@/stores/userStore'
-import { useNotifications } from '@/composables/useNotifications'
 import { PencilLine, Trash } from 'lucide-vue-next'
-import Button from './ui/Button.vue'
+import Button from '@/components/ui/Button.vue'
 const bookStore = useBookStore()
-const userStore = useUserStore()
-const { addNotification } = useNotifications()
 
 /**
  * Formata data para exibição em português
@@ -145,6 +140,8 @@ const hasPublicationInfo = (book) => {
 const hasAdditionalNotes = (book) => {
   return !!(book.notes || (book.tags && book.tags.length > 0))
 };
+
+
 </script>
 
 <template>
@@ -262,16 +259,6 @@ const hasAdditionalNotes = (book) => {
               </div>
             </div>
 
-            <div v-if="!userStore.isGuest" class="reading-card__actions">
-              <Button class="reading-card__action-btn reading-card__action-edit" @click="$emit('edit', book)">
-                <PencilLine size="18" />
-                <span>Editar</span>
-              </Button>
-              <Button class="reading-card__action-btn reading-card__action-delete" @click="$emit('delete', book)">
-                <Trash size="18" />
-                <span>Excluir</span>
-              </Button>
-            </div>
           </div>
         </article>
       </div>
@@ -603,50 +590,10 @@ const hasAdditionalNotes = (book) => {
 /* Ações */
 .reading-card__actions {
   display: flex;
+  justify-content: flex-end;
   gap: 1rem;
   padding-top: 1rem;
   border-top: 1px solid var(--accent_muted);
-}
-
-.reading-card__action-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: 0.875rem;
-}
-
-.reading-card__action-edit {
-  background: var(--accent3_muted);
-  color: var(--accent3);
-}
-
-.reading-card__action-edit:hover {
-  background: var(--accent3);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(179, 198, 213, 0.3);
-}
-
-.reading-card__action-delete {
-  background: var(--accent_muted);
-  color: var(--accent);
-}
-
-.reading-card__action-delete:hover {
-  background: var(--accent);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(218, 147, 143, 0.3);
 }
 
 /* ===== RESPONSIVIDADE ===== */

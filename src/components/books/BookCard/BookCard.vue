@@ -2,9 +2,9 @@
 import { ref, onMounted } from 'vue'
 import { useBookStore } from '@/stores/bookStore'
 import { useNotifications } from '@/composables/useNotifications'
-import ConfirmDialog from './ConfirmDialog.vue'
-import CardFront from './BookCard/CardFront.vue'
-import CardBack from './BookCard/CardBack.vue'
+import ConfirmDialog from '@/components/feedback/ConfirmDialog.vue'
+import CardFront from './CardFront.vue'
+import CardBack from './CardBack.vue'
 
 import { useAnimatedModal } from '@/composables/useAnimatedModal.js'
 

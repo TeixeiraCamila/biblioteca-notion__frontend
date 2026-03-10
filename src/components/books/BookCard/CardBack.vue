@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import CardStatus from './CardStatus.vue'
-import Button from '../ui/Button.vue'
+import Button from '@/components/ui/Button.vue'
 import { PencilLine, Trash, X } from 'lucide-vue-next'
 
 const props = defineProps({

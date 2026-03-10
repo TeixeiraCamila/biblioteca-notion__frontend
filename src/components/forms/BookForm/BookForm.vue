@@ -4,10 +4,10 @@ import { reactive, ref, onMounted, watch } from 'vue'
 import { useBookStore } from '@/stores/bookStore'
 import { BOOK_STATUS, BOOK_RATE_LABELS } from '@/constants/book'
 import { useNotifications } from '@/composables/useNotifications'
-import FormSection from './FormSection.vue'
-import FormField from './FormField.vue'
-import FormActions from './FormActions.vue'
-import Button from './ui/Button.vue'
+import FormSection from '../FormSection.vue'
+import FormField from '../FormField.vue'
+import FormActions from '../FormActions.vue'
+import Button from '../../ui/Button.vue'
 const props = defineProps({
   book: {
     type: Object,

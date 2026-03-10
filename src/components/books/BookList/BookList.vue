@@ -2,11 +2,11 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useBookStore } from '@/stores/bookStore'
-import BookCard from './BookCard.vue'
-import BookCardSkeleton from './BookCardSkeleton.vue'
-import Pagination from './Pagination.vue'
-import Filters from './Filters.vue'
-import Button from './ui/Button.vue'
+import BookCard from '@/components/books/BookCard/BookCard.vue'
+import BookCardSkeleton from '@/components/ui/Skeleton/BookCardSkeleton.vue'
+import Pagination from '@/components/navigation/Pagination.vue'
+import Filters from '@/components/navigation/Filters.vue'
+import Button from '@/components/ui/Button.vue'
 const bookStore = useBookStore()
 const router = useRouter()
 

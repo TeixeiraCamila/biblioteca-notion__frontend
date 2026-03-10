@@ -1,6 +1,6 @@
 <script setup>
 import BookList from '@/components/BookList.vue'
-import Filters from '@/components/Filters.vue'
+import Filters from '@/components/navigation/Filters.vue'
 </script>
 
 <template>

@@ -5,7 +5,7 @@ import { useBookStore } from '@/stores/bookStore'
 import { useUserStore } from '@/stores/userStore'
 import router from '@/router'
 
-import Button from './ui/Button.vue'
+import Button from '../ui/Button.vue'
 
 const bookStore = useBookStore()
 const userStore = useUserStore()

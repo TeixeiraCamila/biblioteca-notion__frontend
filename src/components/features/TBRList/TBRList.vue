@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, computed } from 'vue'
 import { useBookStore } from '@/stores/bookStore'
-import Button from './ui/Button.vue'
+import Button from '@/components/ui/Button.vue'
 const bookStore = useBookStore()
 
 

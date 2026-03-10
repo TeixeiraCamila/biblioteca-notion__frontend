@@ -3,8 +3,8 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useBookStore } from '@/stores/bookStore'
 import { useNotifications } from '@/composables/useNotifications'
-import BookForm from '@/components/BookForm.vue'
-import FormSkeleton from '@/components/FormSkeleton.vue'
+import BookForm from '@/components/forms/BookForm/BookForm.vue'
+import FormSkeleton from '@/components/ui/Skeleton/FormSkeleton.vue'
 import Button from '@/components/ui/Button.vue'
 const { addNotification } = useNotifications()
 

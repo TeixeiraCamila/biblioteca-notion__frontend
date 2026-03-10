@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useBookStore } from '@/stores/bookStore'
-import Button from './ui/Button.vue'
+import Button from '../ui/Button.vue'
 
 const bookStore = useBookStore()
 const localSearch = ref(bookStore.searchTerm)

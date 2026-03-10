@@ -506,7 +506,7 @@ const handleDelete = async () => {
 
 Esta estrutura e estes guidelines garantem que a aplicação seja escalável, manutenível e de alta qualidade.
 
-## 🔧 Comandos Disponíveis
+## � Comandos Disponíveis
 
 ```bash
 # Desenvolvimento

@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue'
-import Button from './ui/Button.vue'
+import Button from '../ui/Button.vue'
 
 defineProps({
   bookCount: { type: Number, required: true },

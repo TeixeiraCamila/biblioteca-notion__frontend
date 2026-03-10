@@ -1,7 +1,18 @@
 <script setup>
-import { ref, onMounted, } from 'vue'
+import { ref, onMounted } from 'vue'
+import { gsap } from 'gsap'
 
-import gsap from 'gsap'
+// Import assets
+import bgRTop from '@/assets/images/cards/card_01_intro/bg-r_top.webp'
+import bgRBottom from '@/assets/images/cards/card_01_intro/bg-r_bottom.webp'
+import paper02 from '@/assets/images/cards/card_01_intro/paper-02.webp'
+import paper06 from '@/assets/images/cards/card_01_intro/paper-06.webp'
+import paper5 from '@/assets/images/cards/card_01_intro/paper-5.webp'
+import cloud from '@/assets/images/cards/card_01_intro/cloude.webp'
+import start from '@/assets/images/cards/card_01_intro/start.webp'
+import coffee from '@/assets/images/cards/card_01_intro/coffee.webp'
+import paper01 from '@/assets/images/cards/card_01_intro/paper-01.webp'
+import luck from '@/assets/images/cards/card_01_intro/luck.webp'
 
 const animatedElements = ref()
 
@@ -60,36 +71,29 @@ function anime() {
     },
     '-=1.5',
   )
-};
+}
 
 onMounted(() => {
   anime()
 });
-
 </script>
 
 <template>
   <div class="card-intro">
     <div class="card-intro__detail">
-      <img class="card-intro__detail-01" src="../../assets/images/cards/card_01_intro/bg-r_top.webp" alt="">
-      <img class="card-intro__detail-02" src="../../assets/images/cards/card_01_intro/bg-r_bottom.webp" alt="">
-      <img class="card-intro__detail-03" src="../../assets/images/cards/card_01_intro/paper-02.webp" alt="">
-      <img class="card-intro__detail-04" src="../../assets/images/cards/card_01_intro/paper-06.webp" alt="">
-
-      <img class="card-intro__detail-05" src="../../assets/images/cards/card_01_intro/paper-5.webp" alt="">
-
-      <img class="card-intro__cloud" src="../../assets/images/cards/card_01_intro/cloude.webp" alt="">
-
-      <img class="card-intro__start" src="../../assets/images/cards/card_01_intro/start.webp" alt="">
-
-      <img class="card-intro__coffee" src="../../assets/images/cards/card_01_intro/coffee.webp" alt="">
-
-
+      <img class="card-intro__detail-01" :src="bgRTop" alt="">
+      <img class="card-intro__detail-02" :src="bgRBottom" alt="">
+      <img class="card-intro__detail-03" :src="paper02" alt="">
+      <img class="card-intro__detail-04" :src="paper06" alt="">
+      <img class="card-intro__detail-05" :src="paper5" alt="">
+      <img class="card-intro__cloud" :src="cloud" alt="">
+      <img class="card-intro__start" :src="start" alt="">
+      <img class="card-intro__coffee" :src="coffee" alt="">
     </div>
     <div class="card-intro__content">
-      <img class="card-intro__content__image" src="../../assets/images/cards/card_01_intro/paper-01.webp" alt="">
+      <img class="card-intro__content__image" :src="paper01" alt="">
 
-      <img class="card-intro__content__detail" src="../../assets/images/cards/card_01_intro/luck.webp" alt="">
+      <img class="card-intro__content__detail" :src="luck" alt="">
 
       <h1 ref="animatedElements" class="card-intro__title">
         <p>My Book</p>
@@ -99,8 +103,6 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-
 
 <style scoped>
 .card-intro {

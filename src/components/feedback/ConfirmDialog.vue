@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useNotifications } from '@/composables/useNotifications'
-import Button from './ui/Button.vue'
+import Button from '../ui/Button.vue'
 
 const props = defineProps({
   title: { type: String, default: 'Confirmar ação' },

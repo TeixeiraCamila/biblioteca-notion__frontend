@@ -3,16 +3,16 @@ import { defineAsyncComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { useBookStore } from '@/stores/bookStore'
-import CardIntro from '@/components/Stack/CardIntro.vue'
+import CardIntro from '@/components/features/Stack/CardIntro.vue'
 import Button from '@/components/ui/Button.vue'
 
 const bookStore = useBookStore()
 const userStore = useUserStore()
 
 
-const BookList = defineAsyncComponent(() => import('@/components/BookList.vue'))
-const TBRList = defineAsyncComponent(() => import('@/components/TBRList.vue'))
-const ReadingList = defineAsyncComponent(() => import('@/components/ReadingList.vue'))
+const BookList = defineAsyncComponent(() => import('@/components/books/BookList/BookList.vue'))
+const TBRList = defineAsyncComponent(() => import('@/components/features/TBRList/TBRList.vue'))
+const ReadingList = defineAsyncComponent(() => import('@/components/features/ReadingList/ReadingList.vue'))
 
 // Swiper para navegação entre cards
 import { Swiper, SwiperSlide } from 'swiper/vue'
