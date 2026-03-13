@@ -3,12 +3,14 @@ const props = defineProps({
   bookStatus: { type: Object, required: true },
   rotate: { type: String, required: false },
 });
+
+import tape from '@/assets/images/tape.webp'
 </script>
 
 <template>
   <div class="card-status__tape" :style="{ transform: rotate }">
     <p class="card-status__text">{{ bookStatus }}</p>
-    <img width="150" src="../../assets/images/tape.webp" alt="" />
+    <img width="150" :src="tape" alt="" />
   </div>
 </template>
 
