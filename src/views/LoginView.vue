@@ -172,8 +172,9 @@ const handleGuestLogin = () => {
 /* Container da máquina de escrever */
 .typewriter-container {
   opacity: 0;
-  transform: translateY(50px) rotateX(10deg) scale(0.8);
+  transform: translateY(100px) rotateX(10deg) scale(0.8);
   transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-top: 150px; /* Espaço para o papel subir */
 }
 
 .typewriter-container.typewriter-enter {
@@ -199,17 +200,7 @@ const handleGuestLogin = () => {
   display: flex;
   flex-direction: column;
   position: relative;
-}
-
-.typewriter__base::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 40px;
-  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));
-  border-radius: 0 0 20px 20px;
+  z-index: 2;
 }
 
 .typewriter__body {
@@ -239,22 +230,6 @@ const handleGuestLogin = () => {
   position: relative;
 }
 
-.typewriter__roller-left::after,
-.typewriter__roller-right::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent,
-    transparent 3px,
-    rgba(0, 0, 0, 0.1) 3px,
-    rgba(0, 0, 0, 0.1) 6px
-  );
-}
-
 /* Slot do papel */
 .typewriter__paper-slot {
   flex: 1;
@@ -262,40 +237,37 @@ const handleGuestLogin = () => {
   border-radius: 8px;
   padding: 15px;
   margin-bottom: 20px;
-  overflow: hidden;
   position: relative;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
-}
-
-.typewriter__paper-slot::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 8px;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent);
+  /* Removido overflow: hidden para permitir que o papel suba para fora da máquina */
 }
 
 /* Papel */
 .paper {
   background: #f5f1e8;
-  padding: 30px;
+  padding: 40px;
   border-radius: 4px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
   opacity: 0;
-  transform: translateY(-20px);
-  transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-  min-height: 300px;
+  /* Começa escondido dentro da máquina */
+  transform: translateY(100px); 
+  transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+  width: 85%;
+  margin: 0 auto;
+  min-height: 450px;
   display: flex;
   flex-direction: column;
-  position: relative;
+  position: absolute;
+  left: 7.5%;
+  bottom: 20px;
+  z-index: -1; /* Fica atrás da frente da máquina */
   font-family: 'Courier New', monospace;
 }
 
 .paper.paper-enter {
   opacity: 1;
-  transform: translateY(0);
+  /* Sobe para fora da máquina */
+  transform: translateY(-380px); 
 }
 
 /* Cabeçalho do papel */
@@ -304,7 +276,7 @@ const handleGuestLogin = () => {
   justify-content: space-between;
   align-items: center;
   padding-bottom: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   border-bottom: 2px solid #333;
   font-family: 'Courier New', monospace;
   font-size: 12px;
@@ -344,33 +316,30 @@ const handleGuestLogin = () => {
 
 .paper__input {
   width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #999;
-  background: #fefdfb;
+  padding: 10px;
+  border: none;
+  border-bottom: 1px dotted #999;
+  background: transparent;
   font-family: 'Courier New', monospace;
-  font-size: 12px;
+  font-size: 14px;
   color: #333;
   outline: none;
   transition: all 0.3s ease;
 }
 
 .paper__input:focus {
-  border-color: #666;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.paper__input::placeholder {
-  color: #bbb;
+  border-bottom-style: solid;
+  border-bottom-color: #333;
 }
 
 .paper__button {
-  margin-top: 15px;
-  padding: 10px;
+  margin-top: 20px;
+  padding: 12px;
   background: #333;
   color: #f5f1e8;
   border: none;
   font-family: 'Courier New', monospace;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -380,11 +349,6 @@ const handleGuestLogin = () => {
 .paper__button:hover {
   background: #555;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.paper__button:active {
-  transform: translateY(0);
 }
 
 .paper__guest-container {
@@ -401,13 +365,6 @@ const handleGuestLogin = () => {
   font-size: 11px;
   cursor: pointer;
   transition: all 0.3s ease;
-  letter-spacing: 0.5px;
-}
-
-.paper__guest-btn:hover {
-  border-color: #333;
-  color: #333;
-  background: rgba(0, 0, 0, 0.02);
 }
 
 .paper__error-message {
@@ -416,15 +373,13 @@ const handleGuestLogin = () => {
   background: #ffe8e8;
   color: #c33;
   border: 1px solid #ffcccc;
-  border-radius: 3px;
   text-align: center;
   font-size: 11px;
-  font-family: 'Courier New', monospace;
 }
 
 /* Rodapé do papel */
 .paper__footer {
-  margin-top: 20px;
+  margin-top: 30px;
   padding-top: 15px;
   border-top: 1px dotted #999;
   display: flex;
@@ -437,8 +392,6 @@ const handleGuestLogin = () => {
   font-size: 11px;
   color: #666;
   font-weight: bold;
-  font-family: 'Courier New', monospace;
-  letter-spacing: 0.5px;
 }
 
 .paper__footer-line {
@@ -456,8 +409,6 @@ const handleGuestLogin = () => {
 .paper__footer-text {
   font-size: 10px;
   color: #999;
-  font-family: 'Courier New', monospace;
-  letter-spacing: 0.5px;
 }
 
 /* Teclado */
@@ -468,17 +419,7 @@ const handleGuestLogin = () => {
   padding: 12px;
   box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5), 0 5px 15px rgba(0, 0, 0, 0.3);
   position: relative;
-}
-
-.typewriter__keyboard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 6px;
-  background: linear-gradient(to bottom, #555, transparent);
-  border-radius: 12px 12px 0 0;
+  z-index: 3;
 }
 
 .typewriter__keys {
@@ -491,75 +432,28 @@ const handleGuestLogin = () => {
 .typewriter__key {
   background: radial-gradient(circle at 30% 30%, #c9b89a, #8b7d6b);
   border-radius: 50%;
-  box-shadow: inset -2px -2px 5px rgba(0, 0, 0, 0.3), inset 2px 2px 5px rgba(255, 255, 255, 0.1),
-    0 3px 8px rgba(0, 0, 0, 0.4);
-  transition: all 0.1s ease;
-  cursor: pointer;
-}
-
-.typewriter__key:hover {
-  transform: translateY(-2px);
-  box-shadow: inset -2px -2px 5px rgba(0, 0, 0, 0.3), inset 2px 2px 5px rgba(255, 255, 255, 0.1),
-    0 5px 12px rgba(0, 0, 0, 0.5);
-}
-
-.typewriter__key:active {
-  transform: translateY(2px);
-  box-shadow: inset -2px -2px 5px rgba(0, 0, 0, 0.3), inset 2px 2px 5px rgba(255, 255, 255, 0.1),
-    0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: inset -2px -2px 5px rgba(0, 0, 0, 0.3), 0 3px 8px rgba(0, 0, 0, 0.4);
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
+  .typewriter-container {
+    margin-top: 200px;
+  }
+  
   .typewriter {
     width: 90vw;
     max-width: 500px;
-    height: auto;
-  }
-
-  .typewriter__base {
-    padding: 20px;
   }
 
   .paper {
-    padding: 20px;
-    font-size: 14px;
+    width: 90%;
+    left: 5%;
+    min-height: 400px;
   }
 
-  .paper__header {
-    font-size: 10px;
-  }
-
-  .paper__label {
-    font-size: 10px;
-  }
-
-  .paper__input {
-    font-size: 11px;
-  }
-
-  .typewriter__keys {
-    grid-template-columns: repeat(8, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .typewriter {
-    width: 95vw;
-    height: auto;
-  }
-
-  .typewriter__base {
-    padding: 15px;
-  }
-
-  .paper {
-    padding: 15px;
-  }
-
-  .typewriter__keys {
-    grid-template-columns: repeat(6, 1fr);
-    gap: 6px;
+  .paper.paper-enter {
+    transform: translateY(-320px);
   }
 }
 </style>
