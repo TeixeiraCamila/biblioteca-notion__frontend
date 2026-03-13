@@ -85,21 +85,21 @@ const inputType = computed(() => {
     </label>
 
     <div class="form-field__input-wrapper">
-      <!-- Select com suporte a labels customizados -->
+
       <select v-if="type === 'select'" :id="fieldId" v-model="localValue" class="form-field__input form-field__select"
         :class="{ 'form-field__input--error': error }" @change="$emit('update:modelValue', $event.target.value)">
         <option value="" disabled>{{ placeholder || 'Selecione uma opção' }}</option>
-        <!-- ✅ CORRIGIDO: Suporte a labels customizados -->
+
         <option v-for="option in options" :key="option" :value="option">
           {{ labels ? labels[option] : option }}
         </option>
       </select>
 
-      <!-- Checkbox -->
+
       <input v-else-if="type === 'checkbox'" :id="fieldId" type="checkbox" v-model="localValue"
         class="form-field__checkbox" @change="$emit('update:modelValue', $event.target.checked)" />
 
-      <!-- Outros tipos de input -->
+
       <input v-else :id="fieldId" :type="inputType" v-model="localValue" :placeholder="placeholder" :min="min"
         :max="max" :step="step" class="form-field__input" :class="{ 'form-field__input--error': error }"
         @input="$emit('update:modelValue', $event.target.value)" />

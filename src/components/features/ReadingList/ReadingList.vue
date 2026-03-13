@@ -2,6 +2,7 @@
 import { useBookStore } from '@/stores/bookStore'
 import { PencilLine, Trash } from 'lucide-vue-next'
 import Button from '@/components/ui/Button.vue'
+import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 const bookStore = useBookStore()
 
 /**
@@ -161,10 +162,14 @@ const hasAdditionalNotes = (book) => {
       </Button>
     </div>
 
-    <div v-else-if="bookStore.loadingTbr" class="reading-list__loading">
+    <LoadingSpinner v-else-if="bookStore.loadingTbr">
+      <p>Carregando livros em leitura...</p>
+    </LoadingSpinner>
+
+    <!-- <div v-else-if="bookStore.loadingTbr" class="reading-list__loading">
       <div class="reading-list__spinner"></div>
       <p>Carregando livros em leitura...</p>
-    </div>
+    </div> -->
 
     <div v-else-if="bookStore.readingBooks.length === 0 && !bookStore.loadingTbr" class="reading-list__empty">
       <div class="reading-list__empty-icon">📚</div>
@@ -176,7 +181,7 @@ const hasAdditionalNotes = (book) => {
 
     <div v-else class="reading-list__container">
       <div class="reading-list__grid">
-        <article v-for="book in bookStore.readingBooks" :key="book.id" class="reading-card">
+        <article v-for="(book, index) in bookStore.readingBooks" :key="book.id" class="reading-card" :class="`reading-card--blob-${(index % 6) + 1}`">
           <!-- Capa do livro -->
           <div class="reading-card__cover">
             <img v-if="book.cover?.[0]" :src="book.cover[0]" :alt="`Capa do livro ${book.name}`"
@@ -594,6 +599,45 @@ const hasAdditionalNotes = (book) => {
   gap: 1rem;
   padding-top: 1rem;
   border-top: 1px solid var(--accent_muted);
+}
+
+/* ===== BLOB ANIMATIONS ===== */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes wave {
+
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0px) scale(1);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(-15px) scale(1.05);
+  }
 }
 
 /* ===== RESPONSIVIDADE ===== */

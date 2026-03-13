@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { defineEmits } from 'vue'
 import Button from '../ui/Button.vue'
 
 defineProps({
@@ -22,7 +22,9 @@ defineProps({
 })
 
 defineEmits(['cancel']);
+
 </script>
+
 <template>
   <div class="form-actions">
     <Button
@@ -42,8 +44,6 @@ defineEmits(['cancel']);
     </Button>
   </div>
 </template>
-
-
 
 <style scoped>
 .form-actions {
@@ -94,7 +94,6 @@ defineEmits(['cancel']);
   border-color: #9ca3af;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .form-actions {
     flex-direction: column;

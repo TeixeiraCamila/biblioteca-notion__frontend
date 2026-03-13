@@ -3,7 +3,6 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import Button from '@/components/ui/Button.vue'
-
 const router = useRouter()
 const userStore = useUserStore()
 
@@ -89,7 +88,6 @@ const handleGuestLogin = () => {
 .login-view__container {
   width: 100%;
   max-width: 400px;
-  padding: 20px;
   background-image: url('../assets/images/bg-login.webp');
   background-repeat: no-repeat;
   background-size: contain;
@@ -97,36 +95,30 @@ const handleGuestLogin = () => {
   background-position: center;
   display: flex;
   align-items: center;
+  position: relative;
+  isolation: isolate;
 }
-.login-view__container button {
-  width: 100%;
 
-}
 .login-view__card {
-  padding: 40px;
   transform: rotate(-5deg);
-  margin-left: 25px;
+  margin: 0 auto;
 }
-
 .login-view__card h2 {
-  margin: 0 0 30px 0;
   text-align: center;
-  color: #333;
+  color: var(--black);
   font-size: 28px;
 }
 
-.login-view__form-group {
-  margin-bottom: 20px;
+.login-view__card form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
-.login-view__form-group label {
-  display: block;
-  margin-bottom: 8px;
-  color: #555;
-  font-weight: 500;
-  font-size: 14px;
+.login-view__container button {
+  width: 100%;
 }
-
 
 .login-view__error-message {
   margin-top: 20px;
@@ -136,10 +128,6 @@ const handleGuestLogin = () => {
   border-radius: 8px;
   text-align: center;
   font-size: 14px;
-}
-
-.login-view__guest-container {
-  margin-top: 20px;
-  text-align: center;
+  width: 227px;
 }
 </style>

@@ -2,16 +2,13 @@
 import { RouterView, useRoute } from 'vue-router'
 import { computed } from 'vue'
 
-const route = useRoute()
+const route = useRoute();
 
-const showHeader = computed(() => {
-  return !route.meta.hideHeader
-});
 </script>
 
 <template>
-  <div class="app__view" :class="{ 'app__view--login': !showHeader }">
-    <main class="app__main-content" :class="{ 'app__main-content--login': !showHeader }">
+  <div class="app__view" >
+    <main class="app__main-content" :class="{'app__main-content--login': route.name === 'login'}">
       <router-view v-slot="{ Component, route }">
         <transition name="page-turn" mode="out-in">
           <component :is="Component" :key="route.path" />

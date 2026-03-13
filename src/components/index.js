@@ -3,6 +3,7 @@
 
 // UI Components
 export { default as Button } from './ui/Button.vue'
+export { default as LoadingSpinner } from './ui/LoadingSpinner.vue'
 export { default as Input } from './ui/Input.vue'
 export { default as Modal } from './ui/Modal.vue'
 export { default as Card } from './ui/Card.vue'
