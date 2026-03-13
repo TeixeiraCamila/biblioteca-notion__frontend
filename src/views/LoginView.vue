@@ -10,20 +10,20 @@ const userStore = useUserStore()
 const name = ref('')
 const email = ref('')
 const error = ref('')
-const showTypewriter = ref(false)
-const showPaper = ref(false)
+const showCamera = ref(false)
+const showPhoto = ref(false)
 
 // Carrega usuários ao montar
 onMounted(async () => {
   try {
     // Inicia animações de entrada
     setTimeout(() => {
-      showTypewriter.value = true
+      showCamera.value = true
     }, 100)
     
     setTimeout(() => {
-      showPaper.value = true
-    }, 800)
+      showPhoto.value = true
+    }, 1000)
     
     await userStore.fetchAllUsers()
   } catch (err) {
@@ -65,90 +65,86 @@ const handleGuestLogin = () => {
 
 <template>
   <div class="login-view__container">
-    <!-- Máquina de escrever -->
-    <div class="typewriter-container" :class="{ 'typewriter-enter': showTypewriter }">
-      <div class="typewriter">
-        <!-- Base da máquina -->
-        <div class="typewriter__base">
-          <div class="typewriter__body">
-            <!-- Topo da máquina -->
-            <div class="typewriter__top">
-              <div class="typewriter__roller-left"></div>
-              <div class="typewriter__roller-right"></div>
-            </div>
+    <!-- Câmera Polaroid -->
+    <div class="polaroid-container" :class="{ 'camera-enter': showCamera }">
+      <!-- Câmera -->
+      <div class="camera">
+        <!-- Corpo da câmera -->
+        <div class="camera__body">
+          <!-- Topo da câmera -->
+          <div class="camera__top">
+            <div class="camera__flash"></div>
+            <div class="camera__lens"></div>
+          </div>
 
-            <!-- Papel saindo da máquina -->
-            <div class="typewriter__paper-slot">
-              <div class="paper" :class="{ 'paper-enter': showPaper }">
-                <!-- Cabeçalho do papel -->
-                <div class="paper__header">
-                  <span class="paper__date">omont.2020</span>
-                  <span class="paper__title">boring office</span>
-                </div>
+          <!-- Visor -->
+          <div class="camera__viewfinder">
+            <div class="camera__viewfinder-inner"></div>
+          </div>
 
-                <!-- Conteúdo do papel (formulário) -->
-                <div class="paper__content">
+          <!-- Slot de saída da foto -->
+          <div class="camera__photo-slot">
+            <!-- Foto/Formulário descendo -->
+            <div class="photo" :class="{ 'photo-exit': showPhoto }">
+              <!-- Frente da foto (branca) -->
+              <div class="photo__front">
+                <!-- Conteúdo do formulário -->
+                <div class="photo__content">
+                  <h2 class="photo__title">Login</h2>
+
                   <form @submit.prevent="handleLogin">
-                    <div class="paper__form-group">
-                      <label for="name" class="paper__label">Nome</label>
+                    <div class="photo__form-group">
+                      <label for="name" class="photo__label">Nome</label>
                       <input
                         id="name"
                         v-model="name"
                         type="text"
-                        class="paper__input"
+                        class="photo__input"
                         placeholder="seu nome"
                         required
                       />
                     </div>
 
-                    <div class="paper__form-group">
-                      <label for="email" class="paper__label">Email</label>
+                    <div class="photo__form-group">
+                      <label for="email" class="photo__label">Email</label>
                       <input
                         id="email"
                         v-model="email"
                         type="email"
-                        class="paper__input"
+                        class="photo__input"
                         placeholder="seu@email.com"
                         required
                       />
                     </div>
 
-                    <Button type="submit" class="paper__button">
+                    <Button type="submit" class="photo__button">
                       <span>Entrar</span>
                     </Button>
                   </form>
 
-                  <div class="paper__guest-container">
-                    <Button type="button" class="paper__guest-btn" @click="handleGuestLogin">
+                  <div class="photo__guest-container">
+                    <Button type="button" class="photo__guest-btn" @click="handleGuestLogin">
                       <span>Entrar como Visitante</span>
                     </Button>
                   </div>
 
-                  <div v-if="error" class="paper__error-message">
+                  <div v-if="error" class="photo__error-message">
                     {{ error }}
                   </div>
                 </div>
 
-                <!-- Rodapé do papel -->
-                <div class="paper__footer">
-                  <span class="paper__footer-title">boring office</span>
-                  <div class="paper__footer-line"></div>
-                  <span class="paper__footer-text">old memory of new time ....</span>
+                <!-- Rodapé da foto (área branca típica de Polaroid) -->
+                <div class="photo__footer">
+                  <span class="photo__date">2024</span>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Teclado -->
-            <div class="typewriter__keyboard">
-              <div class="typewriter__keys">
-                <div
-                  v-for="i in 11"
-                  :key="i"
-                  class="typewriter__key"
-                  :style="{ '--key-index': i }"
-                ></div>
-              </div>
-            </div>
+          <!-- Controles da câmera -->
+          <div class="camera__controls">
+            <div class="camera__button"></div>
+            <div class="camera__brand">POLAROID</div>
           </div>
         </div>
       </div>
@@ -164,296 +160,374 @@ const handleGuestLogin = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f5f1e8 0%, #e8dcc8 100%);
+  background: linear-gradient(135deg, #fff8f0 0%, #ffe8d6 100%);
   overflow: hidden;
-  perspective: 1000px;
+  perspective: 1200px;
 }
 
-/* Container da máquina de escrever */
-.typewriter-container {
+/* Container da câmera */
+.polaroid-container {
   opacity: 0;
-  transform: translateY(100px) rotateX(10deg) scale(0.8);
-  transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-  margin-top: 150px; /* Espaço para o papel subir */
+  transform: translateY(50px) scale(0.9) rotateX(15deg);
+  transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.typewriter-container.typewriter-enter {
+.polaroid-container.camera-enter {
   opacity: 1;
-  transform: translateY(0) rotateX(0) scale(1);
+  transform: translateY(0) scale(1) rotateX(0);
 }
 
-/* Máquina de escrever */
-.typewriter {
+/* Câmera Polaroid */
+.camera {
   position: relative;
-  width: 600px;
-  height: 450px;
-  filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.3));
+  width: 420px;
+  height: 520px;
+  filter: drop-shadow(0 30px 80px rgba(0, 0, 0, 0.25));
 }
 
-.typewriter__base {
+.camera__body {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #d4c5a0 0%, #c9b89a 50%, #b8a68a 100%);
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: inset -5px -5px 15px rgba(0, 0, 0, 0.2), inset 5px 5px 15px rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 
+    inset -8px -8px 20px rgba(0, 0, 0, 0.1),
+    inset 8px 8px 20px rgba(255, 255, 255, 0.8),
+    0 30px 80px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   position: relative;
-  z-index: 2;
+  overflow: hidden;
 }
 
-.typewriter__body {
+.camera__body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.8), transparent);
+  z-index: 10;
+}
+
+/* Topo da câmera */
+.camera__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 0 15px;
+}
+
+.camera__flash {
+  width: 45px;
+  height: 45px;
+  background: radial-gradient(circle at 35% 35%, #ffeb99, #ffd700);
+  border-radius: 50%;
+  box-shadow: 
+    inset -2px -2px 8px rgba(0, 0, 0, 0.2),
+    inset 2px 2px 8px rgba(255, 255, 255, 0.5),
+    0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.camera__lens {
+  width: 55px;
+  height: 55px;
+  background: radial-gradient(circle at 30% 30%, #333, #1a1a1a);
+  border-radius: 50%;
+  box-shadow: 
+    inset -3px -3px 10px rgba(0, 0, 0, 0.8),
+    inset 3px 3px 10px rgba(255, 255, 255, 0.1),
+    0 5px 15px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+.camera__lens::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.1), transparent);
+  top: 0;
+  left: 0;
+}
+
+/* Visor */
+.camera__viewfinder {
+  width: 100%;
+  height: 120px;
+  background: linear-gradient(135deg, #e0e0e0, #d0d0d0);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  padding: 8px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.camera__viewfinder-inner {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+  border-radius: 4px;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+}
+
+/* Slot de saída da foto */
+.camera__photo-slot {
+  flex: 1;
+  position: relative;
+  overflow: visible;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 30px;
+}
+
+/* Foto */
+.photo {
+  width: 280px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: translateY(-40px);
+  transition: all 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: absolute;
+  top: -20px;
+  z-index: 5;
+}
+
+.photo.photo-exit {
+  opacity: 1;
+  transform: translateY(200px);
+}
+
+.photo__front {
   display: flex;
   flex-direction: column;
   height: 100%;
-  position: relative;
-}
-
-/* Topo da máquina com rolos */
-.typewriter__top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 60px;
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.typewriter__roller-left,
-.typewriter__roller-right {
-  width: 50px;
-  height: 50px;
-  background: radial-gradient(circle at 30% 30%, #e8dcc8, #8b7d6b);
-  border-radius: 50%;
-  box-shadow: inset -3px -3px 8px rgba(0, 0, 0, 0.3), inset 3px 3px 8px rgba(255, 255, 255, 0.2);
-  position: relative;
-}
-
-/* Slot do papel */
-.typewriter__paper-slot {
-  flex: 1;
-  background: linear-gradient(to right, #8b7d6b, #6b5d4f);
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 20px;
-  position: relative;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
-  /* Removido overflow: hidden para permitir que o papel suba para fora da máquina */
-}
-
-/* Papel */
-.paper {
-  background: #f5f1e8;
-  padding: 40px;
+  background: white;
   border-radius: 4px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-  opacity: 0;
-  /* Começa escondido dentro da máquina */
-  transform: translateY(100px); 
-  transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
-  width: 85%;
-  margin: 0 auto;
-  min-height: 450px;
+  overflow: hidden;
+}
+
+.photo__content {
+  padding: 25px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  position: absolute;
-  left: 7.5%;
-  bottom: 20px;
-  z-index: -1; /* Fica atrás da frente da máquina */
-  font-family: 'Courier New', monospace;
 }
 
-.paper.paper-enter {
-  opacity: 1;
-  /* Sobe para fora da máquina */
-  transform: translateY(-380px); 
-}
-
-/* Cabeçalho do papel */
-.paper__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 15px;
-  margin-bottom: 25px;
-  border-bottom: 2px solid #333;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
+.photo__title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
   letter-spacing: 1px;
 }
 
-.paper__date {
-  font-weight: bold;
-  color: #333;
+.photo__form-group {
+  margin-bottom: 18px;
 }
 
-.paper__title {
-  color: #666;
-  font-size: 11px;
-}
-
-/* Conteúdo do papel */
-.paper__content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.paper__form-group {
-  margin-bottom: 20px;
-}
-
-.paper__label {
+.photo__label {
   display: block;
-  font-size: 11px;
-  font-weight: bold;
-  color: #333;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
   margin-bottom: 6px;
-  font-family: 'Courier New', monospace;
   letter-spacing: 0.5px;
 }
 
-.paper__input {
+.photo__input {
   width: 100%;
   padding: 10px;
   border: none;
-  border-bottom: 1px dotted #999;
+  border-bottom: 2px solid #ddd;
   background: transparent;
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
+  font-size: 13px;
   color: #333;
   outline: none;
   transition: all 0.3s ease;
+  font-family: inherit;
 }
 
-.paper__input:focus {
-  border-bottom-style: solid;
+.photo__input:focus {
   border-bottom-color: #333;
+  background: rgba(0, 0, 0, 0.02);
 }
 
-.paper__button {
+.photo__input::placeholder {
+  color: #bbb;
+}
+
+.photo__button {
   margin-top: 20px;
   padding: 12px;
   background: #333;
-  color: #f5f1e8;
+  color: white;
   border: none;
-  font-family: 'Courier New', monospace;
+  border-radius: 4px;
   font-size: 13px;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.photo__button:hover {
+  background: #555;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.photo__guest-container {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.photo__guest-btn {
+  padding: 8px 12px;
+  background: transparent;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.photo__guest-btn:hover {
+  border-color: #333;
+  color: #333;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.photo__error-message {
+  margin-top: 15px;
+  padding: 10px;
+  background: #fee;
+  color: #c33;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 12px;
+}
+
+/* Rodapé da foto (área branca típica) */
+.photo__footer {
+  height: 50px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #eee;
+}
+
+.photo__date {
+  font-size: 11px;
+  color: #999;
   letter-spacing: 1px;
 }
 
-.paper__button:hover {
-  background: #555;
-  transform: translateY(-2px);
-}
-
-.paper__guest-container {
-  margin-top: 15px;
-  text-align: center;
-}
-
-.paper__guest-btn {
-  padding: 8px;
-  background: transparent;
-  color: #666;
-  border: 1px dashed #999;
-  font-family: 'Courier New', monospace;
-  font-size: 11px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.paper__error-message {
-  margin-top: 15px;
-  padding: 10px;
-  background: #ffe8e8;
-  color: #c33;
-  border: 1px solid #ffcccc;
-  text-align: center;
-  font-size: 11px;
-}
-
-/* Rodapé do papel */
-.paper__footer {
-  margin-top: 30px;
-  padding-top: 15px;
-  border-top: 1px dotted #999;
+/* Controles da câmera */
+.camera__controls {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  padding: 0 15px;
+  margin-top: 10px;
 }
 
-.paper__footer-title {
-  font-size: 11px;
-  color: #666;
-  font-weight: bold;
-}
-
-.paper__footer-line {
-  width: 100%;
-  height: 1px;
-  background: repeating-linear-gradient(
-    to right,
-    #999,
-    #999 4px,
-    transparent 4px,
-    transparent 8px
-  );
-}
-
-.paper__footer-text {
-  font-size: 10px;
-  color: #999;
-}
-
-/* Teclado */
-.typewriter__keyboard {
-  height: 80px;
-  background: linear-gradient(to bottom, #3d3530, #2a2420);
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5), 0 5px 15px rgba(0, 0, 0, 0.3);
-  position: relative;
-  z-index: 3;
-}
-
-.typewriter__keys {
-  display: grid;
-  grid-template-columns: repeat(11, 1fr);
-  gap: 8px;
-  height: 100%;
-}
-
-.typewriter__key {
-  background: radial-gradient(circle at 30% 30%, #c9b89a, #8b7d6b);
+.camera__button {
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle at 35% 35%, #e8e8e8, #c0c0c0);
   border-radius: 50%;
-  box-shadow: inset -2px -2px 5px rgba(0, 0, 0, 0.3), 0 3px 8px rgba(0, 0, 0, 0.4);
+  box-shadow: 
+    inset -3px -3px 10px rgba(0, 0, 0, 0.2),
+    inset 3px 3px 10px rgba(255, 255, 255, 0.8),
+    0 5px 15px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.camera__button:hover {
+  transform: scale(1.05);
+}
+
+.camera__button:active {
+  transform: scale(0.95);
+  box-shadow: 
+    inset -3px -3px 10px rgba(0, 0, 0, 0.3),
+    inset 3px 3px 10px rgba(255, 255, 255, 0.6),
+    0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.camera__brand {
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #333;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
-  .typewriter-container {
-    margin-top: 200px;
-  }
-  
-  .typewriter {
-    width: 90vw;
-    max-width: 500px;
+  .camera {
+    width: 360px;
+    height: 450px;
   }
 
-  .paper {
-    width: 90%;
-    left: 5%;
-    min-height: 400px;
+  .camera__body {
+    padding: 15px;
   }
 
-  .paper.paper-enter {
-    transform: translateY(-320px);
+  .photo {
+    width: 240px;
+  }
+
+  .photo__content {
+    padding: 20px;
+  }
+
+  .photo.photo-exit {
+    transform: translateY(150px);
+  }
+}
+
+@media (max-width: 480px) {
+  .camera {
+    width: 95vw;
+    max-width: 340px;
+    height: auto;
+  }
+
+  .camera__body {
+    padding: 12px;
+  }
+
+  .camera__viewfinder {
+    height: 100px;
+  }
+
+  .photo {
+    width: 85vw;
+    max-width: 220px;
+  }
+
+  .photo__content {
+    padding: 15px;
+  }
+
+  .photo__title {
+    font-size: 18px;
+  }
+
+  .photo.photo-exit {
+    transform: translateY(120px);
   }
 }
 </style>
