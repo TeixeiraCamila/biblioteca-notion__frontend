@@ -26,6 +26,9 @@ const route = useRoute();
   justify-content: center;
   height: 100vh;
 }
+.app__main-content {
+  width: 100%;
+}
 /* .app__main-content {
   padding: 0;
   min-height: 100vh;
