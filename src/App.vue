@@ -7,26 +7,32 @@ const route = useRoute();
 </script>
 
 <template>
-  <div class="app__view" >
-    <main class="app__main-content" :class="{'app__main-content--login': route.name === 'login'}">
+  <div class="app__view" :class="{'app__main-content--login': route.name === 'login'}" >
+    <main class="app__main-content" >
       <router-view v-slot="{ Component, route }">
-        <transition name="page-turn" mode="out-in">
-          <component :is="Component" :key="route.path" />
-        </transition>
+        <component :is="Component" :key="route.path" />
+        <!-- <transition name="page-turn" mode="out-in">
+
+        </transition> -->
       </router-view>
     </main>
   </div>
 </template>
 
 <style>
-.app__main-content,
-.app__main-content--login {
+.app__view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+/* .app__main-content {
   padding: 0;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-}
+} */
 
 /* Page-turn animation */
 .page-turn-enter-active,
